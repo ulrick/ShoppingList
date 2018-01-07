@@ -1,7 +1,7 @@
 # ShoppingList
 Create a complete shopping list.
 
-## Fonctionnalities
+## Features
 - Create an shopping item by category
 - Show the list of shopping item grouped by category
 - Deletion of an shopping item
