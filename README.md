@@ -7,4 +7,5 @@ Create a complete shopping list.
 - Deletion of an shopping item
 - Cross an item out as already purchased during the shopping 
 - Create a new category
+- Delete a category
 - Initialize the list of category
