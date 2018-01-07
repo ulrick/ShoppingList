@@ -14,7 +14,9 @@
       <ion-row> 
           <ion-col col-9>
             <ion-item class="subheader-input">  
-              <ion-input type="text" class="form-control" formControlName="itemName" [(ngModel)]="newItem" name="shoppingItem" placeholder="Insérer un nouvel article"></ion-input>
+              <ion-input type="text" class="form-control" formControlName="itemName" [(ngModel)]="newItem" name="shoppingItem" placeholder="Insérer un nouvel article" autocomplete="on">
+
+              </ion-input>
             </ion-item>
           </ion-col>
           <ion-col>

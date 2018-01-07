@@ -8,17 +8,7 @@ import { ShoppingItem, ItemGroup } from '../model/sample-interface';
 import _ from "lodash";
 import { ItemGroupPage } from '../item-group/item-group';
 import { ItemGroupData } from '../../data/item-group-data';
-//import { ItemGroup } from 'ionic-angular/components/item/item-group';
 //import { FirebaseListObservable } from 'angularfire2/database'; 
-
-//export const CATEGORY : ItemGroup[] = ItemGroupPage.DEFAULT_CATEGORY;
-// [
-//   { itemGroupId: 0, itemGroupLabel: 'Tous', itemGroupValue: 'any', isActive : false},
-//   { itemGroupId: 1, itemGroupLabel: 'Categorie_A', itemGroupValue: 'Categorie_1', isActive : true},
-//   { itemGroupId: 2, itemGroupLabel: 'Categorie_B', itemGroupValue: 'Categorie_2', isActive : false},
-//   { itemGroupId: 3, itemGroupLabel: 'Categorie_C', itemGroupValue: 'Categorie_3', isActive : false},
-//   { itemGroupId: 4, itemGroupLabel: 'Categorie_D', itemGroupValue: 'Categorie_4', isActive : false}
-// ];
 
 @IonicPage({
   name: 'HomePage',
@@ -29,11 +19,10 @@ import { ItemGroupData } from '../../data/item-group-data';
   templateUrl: 'home.html',
   providers: [ShoppingServiceProvider]
 })
-export class HomePage /*extends ItemGroupPage*/{
+export class HomePage {
 
   private newItem : string = "";
   private aisle : string = "Tous";
-  //private itemGroup : ItemGroupData;
   private selectedItem : ShoppingItem;
   private shoppingItem : ShoppingItem = <ShoppingItem>{};
   
@@ -52,7 +41,6 @@ export class HomePage /*extends ItemGroupPage*/{
       "itemName" : ["", Validators.required]
     });
     
-
     this.getShoppingItems();
 
   }
@@ -65,11 +53,16 @@ export class HomePage /*extends ItemGroupPage*/{
     this.getShoppingItems();
   }
 
+  /**
+   * Update category of item if add, or delete an item
+   * 
+   * @private
+   * @memberof HomePage
+   */
   private updateWithExistingItemsGroup() : void {
     this.shoppingService.readShoppingItemsGroup().then((groupList)=>{
       
-      var nonExistingItemGroups : string[] = _.differenceBy(this.shoppingItems.map((val: ShoppingItem) => {return val.itemGroup}), 
-                                                  groupList.map(val=>{return val.itemGroupLabel}));
+      var nonExistingItemGroups : string[] = _.differenceBy(this.shoppingItems.map((val: ShoppingItem) => {return val.itemGroup}), groupList.map(val=>{return val.itemGroupLabel}));
                                        
       this.existingItemsGroup = _.intersectionWith(groupList.map(val=>{return val.itemGroupLabel}), this.shoppingItems.map((val: ShoppingItem) => {return val.itemGroup}), _.isEqual);
       
@@ -84,20 +77,21 @@ export class HomePage /*extends ItemGroupPage*/{
     })
   }
 
+  /**
+   * read shopping item from the database
+   * 
+   * @private
+   * @memberof HomePage
+   */
   private getShoppingItems() : void {
     
     this.shoppingService.readShoppingItems().then(data => {
       this.shoppingItems = data;
-      //this.existingItemsGroup = _.keys(_.groupBy(data, (val=>{return val.itemGroup})));
+    
       if(!this.shoppingItems) {
         this.shoppingItems = [];
-        //this.existingItemsGroup = [];
       }
     }).then(data=>{this.updateWithExistingItemsGroup()});
-  }
-
-  private onPageDidEnter() {
-    this.getShoppingItems(); 
   }
 
  
@@ -111,7 +105,6 @@ export class HomePage /*extends ItemGroupPage*/{
     if(this.newItem != "") {
 
         let alert = this.alertCtrl.create();
-        //let itemGroup : ItemGroupData = new ItemGroupData();
         alert.setTitle("Catégorie d'article");
         alert.setCssClass('custom-alert');
         
@@ -133,54 +126,24 @@ export class HomePage /*extends ItemGroupPage*/{
               this.navCtrl.push(ItemGroupPage);
             }
           });
+
           alert.addButton('Annuler');
-        
+
           alert.addButton({
             text: 'OK',
             handler: data => {
-              console.log("data ", data);
-                
-                var shoppingItem : ShoppingItem = {itemId:null, itemName : "", itemGroup: "", isBought : false};
-                /*itemList  = this.shoppingItems.map((val : ShoppingItem) => {
-                  if (val && val.itemName != "" )
-                    return this.removeAccents(val.itemName).toLowerCase();
-                });*/
-
-                //if(itemList != null && itemList.indexOf(this.newItem.toLowerCase()) === -1) {
-                
-
-                  // Save into database
-                  this.shoppingService.readShoppingItems().then( itemList => {
-
-                    shoppingItem.itemId = null; // _.max(_.map(itemList, (val, index)=>{return index}));
-                    shoppingItem.itemName = this.newItem; 
-                    shoppingItem.itemGroup = data;
-                    shoppingItem.isBought = false;
-
-                    itemList.unshift(shoppingItem);
-
-                    this.shoppingService.createShoppingItems(itemList).then(addedItems => {
-
-                      if(this.existingItemsGroup.indexOf(data) == -1)
-                        this.existingItemsGroup.push(data);
-                        
-                      this.shoppingItems = itemList;
-
-                      // Updates items group if a new category is added  
-                      //this.existingItemsGroup = _.intersectionWith(groupList, this.shoppingItems.map((val: ShoppingItem) => {return val.itemGroup}), _.isEqual);
-
-                      this.newItem = "";
-                    });
-                  }).then(val=>{this.updateWithExistingItemsGroup();});
-                
-                //}
-                //else{
-                //  var options = { duration : 1500, position : 'top', cssClass : 'warning-message' };
-                //  this.presentToast('Cet article existe déjà!', options);
-                //}
-            
+              var itemList  = this.shoppingItems.map((val : ShoppingItem) => {
+                if (val && val.itemName != "" )
+                  return Utils.removeAccents(val.itemName).toLowerCase();
+              });
+              // If not found, add
+              if(itemList != null && itemList.indexOf(this.newItem.toLowerCase()) === -1) {
+                this.createNewItem(data);
+              }
+              else {
+                this.confirmItemDuplication(data);
+              }
             }
-          
           });
 
           alert.present();
@@ -188,19 +151,86 @@ export class HomePage /*extends ItemGroupPage*/{
     }
   }
 
-  public delete(item : ShoppingItem, index: number) {
-    
-    this.shoppingItems.splice(index, 1);
+  /**
+   * 
+   * 
+   * @private
+   * @param {*} data Item group
+   * @returns {Promise<void>} 
+   * @memberof HomePage
+   */
+  private createNewItem(data : any) : Promise<void> {
 
-    this.shoppingService.createShoppingItems(this.shoppingItems);
-    this.updateWithExistingItemsGroup();
-    // this.shoppingService.readShoppingItemsGroup().then((groupList)=>{
-    //   this.existingItemsGroup = _.intersectionWith(groupList.map(val=>{return val.itemGroupLabel}), this.shoppingItems.map((val: ShoppingItem) => {return val.itemGroup}), _.isEqual); 
-    // })
+    var shoppingItem : ShoppingItem = {itemId:null, itemName : "", itemGroup: "", isBought : false};
+    // Save into database
+    return this.shoppingService.readShoppingItems().then( itemList => {
+
+      shoppingItem.itemId = null; // _.max(_.map(itemList, (val, index)=>{return index}));
+      shoppingItem.itemName = this.newItem; 
+      shoppingItem.itemGroup = data;
+      shoppingItem.isBought = false;
+
+      itemList.unshift(shoppingItem);
+
+      this.shoppingService.createShoppingItems(itemList).then(addedItems => {
+
+        if(this.existingItemsGroup.indexOf(data) == -1)
+          this.existingItemsGroup.push(data);
+          
+        this.shoppingItems = itemList;
+
+        this.newItem = "";
+      });
+    }).then(val=>{this.updateWithExistingItemsGroup();});
   }
 
   /**
-   * Check an item if it's already bought
+   * Add duplicated Item
+   * 
+   * @private
+   * @param {*} data : current item group
+   * @memberof HomePage
+   */
+  private confirmItemDuplication(data : any) {
+    let confirm = this.alertCtrl.create({
+      title: 'Confirmer',
+      message: "Cet article existe déjà! Souhaitez-vous l'ajouter? ",
+      buttons: [
+        {
+          text: 'Non',
+          handler: () => {    
+          }
+        },
+        {
+          text: 'Oui',
+          handler: () => {
+            this.createNewItem(data);
+            var options = { duration : 1500, position : 'bottom', cssClass : 'warning-message' };
+            this.presentToast('Ajouté avec succès!', options);
+          }
+        }
+      ]
+    });
+    confirm.present();
+  }
+
+  /**
+   * Delete an item and save the new item list 
+   * 
+   * @param {ShoppingItem} item 
+   * @param {number} index 
+   * @memberof HomePage
+   */
+  public delete(item : ShoppingItem, index: number) {
+    
+    this.shoppingItems.splice(index, 1);
+    this.shoppingService.createShoppingItems(this.shoppingItems);
+    this.updateWithExistingItemsGroup();
+  
+  }
+
+  /**
+   * Check or barre an item if it's already pourchased
    * 
    * @private
    * @param {ShoppingItem} item 
@@ -243,7 +273,6 @@ export class HomePage /*extends ItemGroupPage*/{
     let toast = this.toastCtrl.create(options);
   
     toast.onDidDismiss(() => {
-      console.log('Dismissed toast'); 
     });
   
     toast.present();
