@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    
+    <ion-title text-center>
+      Ma liste de courses
+    </ion-title>
+  </ion-navbar>
+
+  <ion-toolbar>
+    <form [formGroup]="itemForm" (ngSubmit)="addItem()">
+      <ion-row> 
+          <ion-col col-9>
+            <ion-item class="subheader-input">  
+              <ion-input type="text" class="form-control" formControlName="itemName" [(ngModel)]="newItem" name="shoppingItem" placeholder="Insérer un nouvel article"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <button ion-button [disabled]="!itemForm.valid" outline><ion-icon name="add-circle"></ion-icon></button>
+          </ion-col>
+      </ion-row>
+    </form>
+  </ion-toolbar>
+</ion-header>
+ 
+<ion-content>
+
+  <ion-list *ngFor="let itemGroup of existingItemsGroup ; let ind = index">
+
+        <ion-list-header color="light" text-center>
+            {{ itemGroup }} 
+        </ion-list-header>
+
+        <ion-item-sliding *ngFor="let item of shoppingItems ; let i = index">
+          
+            <ion-item *ngIf = "item.itemGroup == itemGroup" [class.line-through] = "item.isBought"> 
+              {{ item.itemName }}
+            </ion-item>
+            <ion-item-options side="right">
+              <button ion-button color="danger" icon-only (click)="delete(item, i)" clear><ion-icon name="ios-trash-outline"></ion-icon></button>
+            </ion-item-options>
+            <ion-item-options side="left" (ionSwipe) = "onBought(item)"> 
+              <button ion-button color="secondary" [ngClass]="{'bought-icon': item.isBought, 'not-bougth-icon' : !item.isBought }" icon-only (click) = "onBought(item)" clear>
+                <ion-icon name="ios-cart-outline"></ion-icon>
+              </button>
+            </ion-item-options> 
+            
+        </ion-item-sliding>
+
+  </ion-list>
+</ion-content>

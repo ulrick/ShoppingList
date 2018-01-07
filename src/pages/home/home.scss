@@ -1,0 +1,49 @@
+home {
+
+    .toast-message {
+        text-align: center;
+    }
+
+    .subheader-input {
+        border-radius : 50px;
+    }
+
+    .line-through{
+        text-decoration: line-through wavy;
+    }
+    
+    .bought-icon{
+        color : #FF3028;
+    }
+
+    .not-bought-icon{
+        color : #32db64;
+    }
+    
+    
+}
+
+ion-toast.warning-message{
+    color : #FFC527 !important;
+}
+
+ion-alert.custom-alert button.alert-button-group {
+    width: 33.33%;
+}
+
+ion-alert.custom-alert .alert-button-group .button-inner {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+ion-alert.custom-alert .alert-button-group-vertical {
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row ;
+}
+
+
+
+
