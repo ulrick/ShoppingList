@@ -12,12 +12,19 @@ import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 import { NativeStorage } from '@ionic-native/native-storage';
 import { ItemGroupPage } from '../pages/item-group/item-group';
+import { SaveListPage } from '../pages/save-list/save-list';
+import { SaveListDetailPage } from '../pages/save-list-detail/save-list-detail';
+import { NotificationManagerProvider } from '../providers/notification-manager/notification-manager';
+import { TabsPage } from '../pages/tabs/tabs';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    ItemGroupPage
+    ItemGroupPage,
+    SaveListPage,
+    SaveListDetailPage,
+    TabsPage
   ],
   imports: [
     BrowserModule,
@@ -33,14 +40,18 @@ import { ItemGroupPage } from '../pages/item-group/item-group';
   entryComponents: [
     MyApp,
     HomePage,
-    ItemGroupPage
+    ItemGroupPage,
+    SaveListPage,
+    SaveListDetailPage,
+    TabsPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ShoppingServiceProvider,
-    NativeStorage
+    NativeStorage,
+    NotificationManagerProvider
   ]
 })
 export class AppModule {}

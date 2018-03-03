@@ -5,10 +5,11 @@
  * @interface ItemGroup
  */
 export interface ItemGroup {
-    itemGroupId? : number;
+    itemGroupId?: number;
     itemGroupLabel : string;
     itemGroupValue : string;
-    isActive ? : boolean;
+    isActive?: boolean;
+    isDisabled?: boolean;
 }
 
 
@@ -23,4 +24,10 @@ export interface ShoppingItem {
     itemName : string;
     itemGroup : string;
     isBought? : boolean;
+}
+
+export interface ShoppingItemSaveType {
+    name: string;
+    value: ShoppingItem[];
+    date: number;
 }

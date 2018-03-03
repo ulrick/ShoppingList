@@ -13,25 +13,22 @@
 </ion-header>
 
 
-<ion-content padding>
-  <ion-fab top right edge>
-      <button ion-fab mini color="light"><ion-icon name="add"></ion-icon></button>
-      <ion-fab-list>
+<ion-content>
+  <ion-fab bottom right>
+      <button ion-fab mini color="secondary"><ion-icon name="add"></ion-icon></button>
+      <ion-fab-list side="top">
           <button (click)="addItemGroup()" ion-fab mini><ion-icon name="add"></ion-icon></button>
           <button (click)="initializeItemGroup()" ion-fab mini><ion-icon name="ios-refresh-outline"></ion-icon></button>
-          <!--button ion-fab><ion-icon name="logo-twitter"></ion-icon></button>
-          <button ion-fab><ion-icon name="logo-vimeo"></ion-icon></button>
-          <button ion-fab><ion-icon name="logo-googleplus"></ion-icon></button>-->
         </ion-fab-list>
   </ion-fab>
 
-  <ion-list>
+  <ion-list reorder="true" (ionItemReorder)="reorderItems($event)">
       <ion-item-sliding *ngFor="let item of itemsGroup ; let ind = index">
         <ion-item padding-right class="item-group-label">
-            <ion-label>{{item.itemGroupLabel}}</ion-label>
-            <ion-toggle [(ngModel)]="item.isActive" checked = "item.isActive" (ionChange)="onToggle(item)"></ion-toggle>
+          <ion-label>{{item.itemGroupLabel}}</ion-label>
+          <ion-toggle item-start [(ngModel)]="item.isActive" checked = "item.isActive" (ionChange)="onToggle(item)"></ion-toggle>  
         </ion-item>
-        <ion-item-options side="left">
+        <ion-item-options side="right">
             <button ion-button color="danger" icon-only (click)="delete(item, ind)" clear><ion-icon name="ios-trash-outline"></ion-icon></button>
         </ion-item-options>
       </ion-item-sliding>

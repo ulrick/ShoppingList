@@ -2,7 +2,7 @@ import {ItemGroupData} from '../../data/item-group-data';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
-import { ShoppingItem, ItemGroup } from '../../pages/model/sample-interface';
+import { ShoppingItem, ItemGroup, ShoppingItemSaveType } from '../../pages/model/sample-interface';
 import { NativeStorage } from '@ionic-native/native-storage';
 
 /*
@@ -16,6 +16,7 @@ export class ShoppingServiceProvider {
 
   private shoppingList : ShoppingItem[] = [];
   private shoppingItemsGroup : ItemGroup[] = [];
+  private duplicatedShoppingList : ShoppingItemSaveType[] = [];
 
 
   constructor(public http: Http, private storage: Storage, private nativeStorage: NativeStorage) {
@@ -40,6 +41,10 @@ export class ShoppingServiceProvider {
       return this.storage.set('items', items).then( val => {
         console.log("item added ! ");
       });
+  }
+
+  public removeShoppingItems(): Promise<void>{
+    return this.storage.remove("items");
   }
 
 
@@ -71,15 +76,55 @@ export class ShoppingServiceProvider {
         //return null;
       });
   }
+  /**
+   * Create and save current item into database
+   * 
+   * @param {*} items 
+   * @returns {Promise<void>} 
+   * @memberof ShoppingServiceProvider
+   */
+  public createDuplicatedCurrentItems(listName : string, items:ShoppingItem[]) : Promise<void>{
 
+    return this.readDuplicatedItems().then((duplicatedItems: ShoppingItemSaveType[])=>{
 
-  /*public getTableByName(tableName : string){
-    return this.storage.forEach(elt=>{
-      if(elt == tableName)
-      return ;
-    })
-  }*/
-  
+      var duplicatedItem: ShoppingItemSaveType = {name:"", value:[], date: null};
+      duplicatedItem.name = listName;
+      duplicatedItem.value = items;
+      duplicatedItem.date = new Date().getTime();
+      duplicatedItems.unshift(duplicatedItem);
+      //this.storage.set('items-save', duplicatedItems);
+      this.createDuplicatedItems(duplicatedItems);
+      
+    })    
+  }
+  /**
+   * Save duplicated list into database
+   * 
+   * @param {*} items 
+   * @returns {Promise<void>} 
+   * @memberof ShoppingServiceProvider
+   */
+  public createDuplicatedItems(items : any) : Promise<void>{
+    return this.storage.set('items-save', items).then( (val : ShoppingItemSaveType[]) => {
+      //return null;
+    });
+  }
+  /**
+   * Get the list of duplicated list
+   * 
+   * @returns {Promise<ShoppingItemSaveType[]>} 
+   * @memberof ShoppingServiceProvider
+   */
+  public readDuplicatedItems() : Promise<ShoppingItemSaveType[]>{
+    return new Promise(resolve => {
+      this.storage.get('items-save').then((data : ShoppingItemSaveType[]) => {
+        this.duplicatedShoppingList = data || [];
+        resolve(this.duplicatedShoppingList);
+      }).catch(error => {
+        this.handleError("Une erreur s'est produite lors de la récupération des catégories d'articles!");
+      });
+    });
+  }
  
 
   private handleError(error: any = "Une erreur est survenue!"): Promise<any> {

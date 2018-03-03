@@ -1,0 +1,38 @@
+<!--
+  Generated template for the SaveListPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title text-center>Mes listes enregistrées</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding-left class="blank-page">
+
+  <ion-card *ngIf = "duplicatedShoppingList.length == 0">
+    <div class="card-title">Oups!!!</div>
+    <div class="card-subtitle">Aucune sauvegarde n'est disponible</div>
+  </ion-card>
+
+  <ion-list *ngIf = "duplicatedShoppingList.length > 0">
+    <ion-item-sliding *ngFor="let item of duplicatedShoppingList ; let i = index">
+          
+        <button ion-item *ngIf = "item != null" (click)="presentActionSheet(item, i)">
+            <h2>{{ item.name }}</h2>
+            <p item-end>{{ item.date | date:'MM/dd/yyyy @ HH:mm'}} <span class = "arrow-right"> <ion-icon name="ios-arrow-forward-outline"></ion-icon> </span> </p>
+        </button>
+        <ion-item-options side="right">
+          <button ion-button color="primary" icon-only (click)="viewDuplicatedList(item)" clear><ion-icon name="ios-eye-outline"></ion-icon></button>
+          <button ion-button color="secondary" icon-only (click)="importDuplicatedList(item)" clear><ion-icon name="ios-download-outline"></ion-icon></button>
+          <button ion-button color="danger" icon-only (click)="delete(item, i)" clear><ion-icon name="ios-trash-outline"></ion-icon></button>
+        </ion-item-options>      
+    </ion-item-sliding>
+  </ion-list>
+  
+</ion-content>

@@ -14,3 +14,26 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+.toast-class .toast-wrapper .toast-container{
+    text-align: center;
+}
+
+.toast-class .toast-wrapper{
+    width: 45%;
+    border-radius: 8px;
+    background: rgba(60,60,60,0.7);
+}
+
+.toast-class .toast-wrapper .toast-container .toast-message{
+    font-size: 1.7rem;
+    line-height: 30px;
+}
+
+.action-sheet-custom .action-sheet-container .action-sheet-button{
+    color: darkslategray; // #2F4F4F
+}
+
+.action-sheet-custom .action-sheet-container .action-sheet-button .action-sheet-icon{
+    color: #37B9D3;
+}

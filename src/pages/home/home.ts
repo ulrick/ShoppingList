@@ -4,10 +4,12 @@ import { Component } from '@angular/core';
 import { NavController, IonicPage, ToastController, AlertController } from 'ionic-angular';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ShoppingItem, ItemGroup } from '../model/sample-interface';
+import { ShoppingItem, ItemGroup, ShoppingItemSaveType } from '../model/sample-interface';
 import _ from "lodash";
 import { ItemGroupPage } from '../item-group/item-group';
 import { ItemGroupData } from '../../data/item-group-data';
+import { NotificationManagerProvider } from '../../providers/notification-manager/notification-manager';
+import { SaveListPage } from '../save-list/save-list';
 //import { FirebaseListObservable } from 'angularfire2/database'; 
 
 @IonicPage({
@@ -17,41 +19,69 @@ import { ItemGroupData } from '../../data/item-group-data';
 @Component({
   selector: 'home',
   templateUrl: 'home.html',
-  providers: [ShoppingServiceProvider]
+  providers: [ShoppingServiceProvider, NotificationManagerProvider]
 })
 export class HomePage {
 
   private newItem : string = "";
-  private aisle : string = "Tous";
-  private selectedItem : ShoppingItem;
-  private shoppingItem : ShoppingItem = <ShoppingItem>{};
   
   private shoppingItems : ShoppingItem[] = [];
   private existingItemsGroup : string[] = [];
   public itemForm : FormGroup;
   private isBought : boolean = false;
+  //private objectKeys : string[] = [];
+  //private itemsGroupByCategory : {[key:string] : ShoppingItem} = {};
  
-  constructor(public navCtrl: NavController, public shoppingService: ShoppingServiceProvider, public formBuilder : FormBuilder, private toastCtrl: ToastController, public alertCtrl: AlertController) {  
-
-    this.shoppingItem = {
-      itemId : null, itemName : "", itemGroup: "", isBought : false
-    };
+  constructor(public navCtrl: NavController, 
+              public shoppingService: ShoppingServiceProvider, 
+              public notificationService: NotificationManagerProvider,  
+              public formBuilder : FormBuilder, 
+              public alertCtrl: AlertController) {
 
     this.itemForm = formBuilder.group({
       "itemName" : ["", Validators.required]
     });
     
-    this.getShoppingItems();
+    this.getShoppingItems().then((data)=>{
+      this.updateWithExistingItemsGroup();
+    });
+    
+    //this.initOrRefreshPage();
 
   }
   
   protected ionViewWillEnter() {
-    this.getShoppingItems();
+    this.getShoppingItems().then((data)=>{
+      this.updateWithExistingItemsGroup();
+    });
+    //this.initOrRefreshPage();
   }
 
   protected ionViewDidEnter() {
-    this.getShoppingItems();
+    this.getShoppingItems().then((data)=>{
+      this.updateWithExistingItemsGroup();
+    });
+    //this.initOrRefreshPage();
   }
+
+  /*private initOrRefreshPage(): void{
+
+    this.getShoppingItems().then((data)=>{
+      this.itemsGroupByCategory = _.groupBy(data, (val: ShoppingItem)=>{
+        return val.itemGroup;
+      });
+
+      //this.objectKeys = Object.keys(this.itemsGroupByCategory);
+      this.shoppingService.readShoppingItemsGroup().then((groupList) => {
+
+        this.objectKeys = _.intersectionWith( groupList.map(val => {
+          
+            return val.itemGroupLabel;
+          }), Object.keys(this.itemsGroupByCategory), _.isEqual)
+      })
+
+    })
+  }*/
 
   /**
    * Update category of item if add, or delete an item
@@ -83,15 +113,16 @@ export class HomePage {
    * @private
    * @memberof HomePage
    */
-  private getShoppingItems() : void {
+  private getShoppingItems() : Promise<ShoppingItem[]> {
     
-    this.shoppingService.readShoppingItems().then(data => {
+    return this.shoppingService.readShoppingItems().then(data => {
       this.shoppingItems = data;
     
       if(!this.shoppingItems) {
         this.shoppingItems = [];
       }
-    }).then(data=>{this.updateWithExistingItemsGroup()});
+      return this.shoppingItems
+    });
   }
 
  
@@ -111,19 +142,22 @@ export class HomePage {
         this.shoppingService.readShoppingItemsGroup().then((groupList) => {
          
           groupList.forEach((value, index) => {
-            alert.addInput({
-              type: 'radio',
-              id : index.toString(),
-              label: value.itemGroupLabel,
-              value: value.itemGroupLabel,//Utils.removeAccents(value+'_'+index.toString()).toLowerCase(),
-              checked: index == 0 ? true : false
-            });
+            if(value.isActive){
+              alert.addInput({
+                type: 'radio',
+                id : index.toString(),
+                label: value.itemGroupLabel,
+                value: value.itemGroupLabel,//Utils.removeAccents(value+'_'+index.toString()).toLowerCase(),
+                checked: value.itemGroupLabel == "Tous" ? true : false
+              });
+            }
           });
         
           alert.addButton({
             text: 'Nouveau',
             handler: data => {
-              this.navCtrl.push(ItemGroupPage);
+              //this.navCtrl.push(ItemGroupPage);
+              this.navCtrl.parent.select(1);
             }
           });
 
@@ -181,7 +215,10 @@ export class HomePage {
 
         this.newItem = "";
       });
-    }).then(val=>{this.updateWithExistingItemsGroup();});
+    }).then(val=>{
+      this.updateWithExistingItemsGroup();
+      //this.initOrRefreshPage();
+    });
   }
 
   /**
@@ -205,8 +242,8 @@ export class HomePage {
           text: 'Oui',
           handler: () => {
             this.createNewItem(data);
-            var options = { duration : 1500, position : 'bottom', cssClass : 'warning-message' };
-            this.presentToast('Ajouté avec succès!', options);
+            var options = { duration : 2000, position : 'top', cssClass : 'warning-message', showCloseButton: false };
+            this.notificationService.showNotification('Ajouté avec succès!', options);
           }
         }
       ]
@@ -224,7 +261,11 @@ export class HomePage {
   public delete(item : ShoppingItem, index: number) {
     
     this.shoppingItems.splice(index, 1);
-    this.shoppingService.createShoppingItems(this.shoppingItems);
+    
+    this.shoppingService.createShoppingItems(this.shoppingItems).then(()=>{
+      //this.initOrRefreshPage();
+    });
+
     this.updateWithExistingItemsGroup();
   
   }
@@ -252,30 +293,77 @@ export class HomePage {
     this.shoppingService.createShoppingItems(this.shoppingItems);
   }
 
-  /**
-   * Show notification
-   * 
-   * @private
-   * @param {string} message 
-   * @param {*} [option] 
-   * @memberof HomePage
-   */
-  private presentToast(message : string, option?: any) {
+  
 
-    var options = {
-      message: message,
-      duration: option.duration ? option.duration : 1500,
-      position: option.position ? option.position : 'middle',
-      cssClass : option.cssClass ? option.cssClass : '',
-      showCloseButton : option.showCloseButton ? option.showCloseButton : false
+  public saveItemList(){
+    if(this.shoppingItems != null && this.shoppingItems.length > 0){
+        let alert = this.alertCtrl.create({
+          title: 'Exporter la liste',
+          inputs: [
+            {
+              name: 'listName',
+              placeholder: 'Nom de la liste'
+            }
+          ],
+          buttons: [
+            {
+              text: 'Annuler',
+              role: 'cancel',
+              handler: data => {
+                console.log('Cancel clicked');
+              }
+            },
+            {
+              text: 'Ok',
+              handler: data => {
+                console.log(data);
+                if (data.listName != "") {
+                  
+                  this.getShoppingItems().then(items =>{
+                  
+                      this.shoppingService.createDuplicatedCurrentItems(data.listName, items).then(()=>{
+                        this.notificationService.showNotification("Liste enregistrée avec succès !");
+                      })
+                    
+                  })
+                  
+                } else {
+                  this.notificationService.showNotification("Veuillez rensigner un nom à votre liste !");
+                  return false;
+                }
+              }
+            }
+          ]
+        });
+        alert.present();
     }
+  }
 
-    let toast = this.toastCtrl.create(options);
-  
-    toast.onDidDismiss(() => {
+  private deleteList(): void {
+    let confirm = this.alertCtrl.create({
+      title: 'Confirmer',
+      message: "Etes vous sûrs de vouloir supprimer la liste en cours? ",
+      buttons: [
+        {
+          text: 'Non',
+          handler: () => {    
+          }
+        },
+        {
+          text: 'Oui',
+          handler: () => {
+            this.shoppingService.removeShoppingItems().then(()=>{
+              //this.initOrRefreshPage();
+              this.getShoppingItems().then((data)=>{
+                this.updateWithExistingItemsGroup();
+              });
+              this.notificationService.showNotification('Suppression effectuée avec succès!');
+            });            
+          }
+        }
+      ]
     });
-  
-    toast.present();
+    confirm.present();
   }
 
 }

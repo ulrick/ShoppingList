@@ -27,9 +27,9 @@ export class ItemGroupPage {
 
 
   constructor(public navCtrl: NavController, public shoppingService: ShoppingServiceProvider, public alertCtrl: AlertController) {
-    this.itemGroup = {
-      itemGroupId : 0, itemGroupLabel : "Tous", itemGroupValue : "any" , isActive : true
-    };
+    /*this.itemGroup = {
+      itemGroupId : 0, itemGroupLabel : "Tous", itemGroupValue : "any" , isActive : true, isDisabled: true
+    };*/
 
     this.shoppingService.readShoppingItemsGroup().then(data => {
       
@@ -46,7 +46,7 @@ export class ItemGroupPage {
 
   private resetItemGroup(): void{
     this.shoppingService.readShoppingItemsGroup().then(groupList => { 
-      this.itemsGroup = [{itemGroupId : 0, itemGroupLabel : "Tous", itemGroupValue : "any" , isActive : true}];
+      this.itemsGroup = [{itemGroupId : 0, itemGroupLabel : "Tous", itemGroupValue : "any" , isActive : true, isDisabled: true}];
       this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
     })
   }
@@ -92,16 +92,18 @@ export class ItemGroupPage {
           text: 'Ok',
           handler: data => {
           
-            var newItemGroup : ItemGroup = {itemGroupId : null, itemGroupLabel : "", itemGroupValue : "" , isActive : true};
+            var newItemGroup : ItemGroup = {itemGroupId : null, itemGroupLabel : "", itemGroupValue : "" , isActive : true, isDisabled: false};
            
             this.shoppingService.readShoppingItemsGroup().then( list => {
-              //console.log(Object.keys(list));
+             
               newItemGroup.itemGroupId = null; //parseInt(_.max(Object.keys(list))) + 1;
               newItemGroup.itemGroupLabel = data.value;
               newItemGroup.itemGroupValue = Utils.removeAccents(data.value+'_'+newItemGroup.itemGroupId).toLowerCase();
 
-              if(list.find(val=>{ return val.itemGroupValue == newItemGroup.itemGroupValue }) == null)
+              // Add new item group if it doesn't exist
+              if(list.find(val=>{ return val.itemGroupValue == newItemGroup.itemGroupValue }) == null){
                 list.push(newItemGroup);
+              }   
 
               this.shoppingService.createShoppingItemsGroup(list).then(addedItems => {
                 this.itemsGroup = list;
@@ -123,7 +125,6 @@ export class ItemGroupPage {
    */
   private onToggle(itemGroup : ItemGroup) {
     this.isActivate = itemGroup.isActive ;
-    //itemGroup.isActive = this.isActivate;
 
     this.itemsGroup.map((val: ItemGroup) => { 
       if((val.itemGroupLabel == itemGroup.itemGroupLabel) || val.itemGroupValue == itemGroup.itemGroupValue) {
@@ -165,7 +166,6 @@ export class ItemGroupPage {
 
 
   private delete(item : ItemGroup, index: number){
-
     let confirm = this.alertCtrl.create({
       title: 'Suppression',
       message: 'Etes vous sûrs de vouloir supprimer cette catégorie? vos articles seront classés dans la catégories "Tous"!',
@@ -187,13 +187,20 @@ export class ItemGroupPage {
             else{
 
             }
-            
           }
         }
       ]
     });
     confirm.present();
+  }
 
+
+  private reorderItems(indexes) {
+    let element = this.itemsGroup[indexes.from];
+    this.itemsGroup.splice(indexes.from, 1);
+    this.itemsGroup.splice(indexes.to, 0, element);
+
+    this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
   }
 
 }
