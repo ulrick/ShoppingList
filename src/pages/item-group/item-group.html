@@ -14,23 +14,23 @@
 
 
 <ion-content>
-  <ion-fab bottom right>
+  <ion-fab bottom right #fab>
       <button ion-fab mini color="secondary"><ion-icon name="add"></ion-icon></button>
       <ion-fab-list side="top">
-          <button (click)="addItemGroup()" ion-fab mini><ion-icon name="add"></ion-icon></button>
-          <button (click)="initializeItemGroup()" ion-fab mini><ion-icon name="ios-refresh-outline"></ion-icon></button>
+          <button (click)="addItemGroup(fab)" ion-fab mini><ion-icon name="add"></ion-icon></button>
+          <button (click)="initializeItemGroup(fab)" ion-fab mini><ion-icon name="ios-refresh-outline"></ion-icon></button>
         </ion-fab-list>
   </ion-fab>
 
   <ion-list reorder="true" (ionItemReorder)="reorderItems($event)">
       <ion-item-sliding *ngFor="let item of itemsGroup ; let ind = index">
         <ion-item padding-right class="item-group-label">
-          <ion-label>{{item.itemGroupLabel}}</ion-label>
-          <ion-toggle item-start [(ngModel)]="item.isActive" checked = "item.isActive" (ionChange)="onToggle(item)"></ion-toggle>  
+          <ion-label (click)="update(item, ind)">{{item.itemGroupLabel}}</ion-label>
+          <ion-toggle item-start [(ngModel)]="item.isActive" [disabled] = "item.isDisabled" checked = "item.isActive" (ionChange)="onToggle(item, ind)"></ion-toggle>  
         </ion-item>
         <ion-item-options side="right">
             <button ion-button color="danger" icon-only (click)="delete(item, ind)" clear><ion-icon name="ios-trash-outline"></ion-icon></button>
         </ion-item-options>
-      </ion-item-sliding>
+      </ion-item-sliding> 
   </ion-list>
 </ion-content>

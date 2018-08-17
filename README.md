@@ -13,3 +13,5 @@ Create a complete shopping list.
 - Save or duplicate current list
 - Import saved list
 - Delete saved list
+- Update or modify an item
+- Update or modify an item group

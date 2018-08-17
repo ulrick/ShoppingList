@@ -9,9 +9,16 @@
     </ion-title>
   </ion-navbar>
 
-  <ion-toolbar>
+  <ion-toolbar class ="toolbar">
     <form [formGroup]="itemForm" (ngSubmit)="addItem()">
-      <ion-row> 
+        <ion-item class="subheader-input">
+          <ion-input type="text" class="form-control" formControlName="itemName" [(ngModel)]="newItem" name="shoppingItem" 
+                      placeholder="Insérer un nouvel article ici" 
+                      autocomplete="on">
+          </ion-input>
+          <button ion-button color="secondary" [class.hide-btn] = "!itemForm.valid" [disabled]="!itemForm.valid" clear item-end><ion-icon name="ios-add-outline"></ion-icon></button>
+        </ion-item>
+      <!--ion-row> 
           <ion-col col-10>
             <ion-item class="subheader-input">  
               <ion-input type="text" class="form-control" formControlName="itemName" [(ngModel)]="newItem" name="shoppingItem" placeholder="Insérer un nouvel article" autocomplete="on">
@@ -20,9 +27,9 @@
             </ion-item>
           </ion-col>
           <ion-col col-2>
-            <button ion-button color="primary" [disabled]="!itemForm.valid" outline item-end icon-left><ion-icon name="ios-add"></ion-icon></button>
+            <button ion-button color="primary" [disabled]="!itemForm.valid" outline item-end icon-left><ion-icon name="ios-add"></ion-icon></button>   
           </ion-col>
-      </ion-row>
+      </ion-row>-->
     </form>
   </ion-toolbar>
 </ion-header>
@@ -36,16 +43,17 @@
             <span class="list-header-divider">{{ itemGroup }}</span>
         </ion-list-header>
 
-        <ion-item-sliding *ngFor="let item of shoppingItems ; let i = index">
+        <ion-item-sliding #slidingItem *ngFor="let item of shoppingItems ; let i = index">
         <!--ion-item-sliding *ngFor="let item of itemsGroupByCategory[key] ; let ind = index">-->
-            <ion-item *ngIf = "item.itemGroup == itemGroup" [class.line-through] = "item.isBought">
+            <ion-item *ngIf = "item.itemGroup == itemGroup" [class.line-through] = "item.isBought" (click)="update(item, i, slidingItem)">
               {{ item.itemName }}
             </ion-item>
             <ion-item-options side="right">
-              <button ion-button color="danger" icon-only (click)="delete(item, i)" clear><ion-icon name="ios-trash-outline"></ion-icon></button>
+              <button ion-button color="primary" icon-only (click)="update(item, i, slidingItem)" clear><ion-icon name="ios-create"></ion-icon></button>
+              <button ion-button color="danger" icon-only (click)="delete(item, i, slidingItem)" clear><ion-icon name="ios-trash-outline"></ion-icon></button>
             </ion-item-options>
-            <ion-item-options side="left" (ionSwipe) = "onBought(item)">
-              <button ion-button color="primary" [ngClass]="{'bought-icon': item.isBought, 'not-bougth-icon' : !item.isBought }" icon-only (click) = "onBought(item)" clear>
+            <ion-item-options side="left" (ionSwipe) = "onBought(item, slidingItem)">
+              <button ion-button color="primary" [ngClass]="{'bought-icon': item.isBought, 'not-bougth-icon' : !item.isBought }" icon-only (click) = "onBought(item, slidingItem)" clear>
                 <ion-icon name="ios-cart-outline"></ion-icon>
               </button>
             </ion-item-options> 
@@ -54,11 +62,11 @@
 
   </ion-list>
 
-  <ion-fab bottom right>
+  <ion-fab bottom right #fab>
     <button ion-fab mini color="secondary"><ion-icon name="md-more"></ion-icon></button>
     <ion-fab-list side="top">
-        <button (click)="saveItemList()" ion-fab mini><ion-icon name="ios-share-outline"></ion-icon></button>
-        <button (click)="deleteList()" ion-fab mini><ion-icon name="ios-trash-outline"></ion-icon></button>
+        <button (click)="saveItemList(fab)" ion-fab mini><ion-icon name="ios-share-outline"></ion-icon></button>
+        <button (click)="deleteList(fab)" ion-fab mini><ion-icon name="ios-trash-outline"></ion-icon></button>
       </ion-fab-list>
   </ion-fab>
 

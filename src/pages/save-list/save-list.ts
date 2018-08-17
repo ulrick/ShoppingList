@@ -28,7 +28,7 @@ export class SaveListPage {
               public alertCtrl: AlertController, 
               public actionSheetCtrl: ActionSheetController) {
 
-    this.getDuplicatedShoppingItems();
+    // this.getDuplicatedShoppingItems();
   }
 
   protected ionViewWillEnter() {
@@ -36,8 +36,8 @@ export class SaveListPage {
   }
 
   protected ionViewDidLoad() {
-    console.log('ionViewDidLoad SaveListPage');
-    this.getDuplicatedShoppingItems();
+    // console.log('ionViewDidLoad SaveListPage');
+    // this.getDuplicatedShoppingItems();
   }
 
   /**
@@ -109,42 +109,48 @@ export class SaveListPage {
    * @param {ShoppingItemSaveType} item 
    * @memberof SaveListPage
    */
-  private importDuplicatedList(item: ShoppingItemSaveType): void {
+  private importDuplicatedList(item: ShoppingItemSaveType, isSaveCurrent: boolean): void {
 
     this.shoppingService.readShoppingItems().then(data =>{
+
+      var msg = isSaveCurrent ? "La liste en cours sera enregistrée après importation!" : "La liste en cours ne sera pas enregistrée après importation!"
      
       let confirm = this.alertCtrl.create({
         title: 'Importer la liste',
-        message: "Attention! l'importation écrasera la liste en cours! Souhaitez-vous enregistrer la liste en cours avant importation?",
+        message: "Attention! " + msg,
         buttons: [
           {
-            text: 'Non',
+            text: 'Annuler',
             handler: () => {
-              this.shoppingService.createShoppingItems(item.value);
-              // Rediriger vers la page des articles
-              this.navCtrl.parent.select(0);
-              this.notificationService.showNotification("Liste importée avec succès !");
             }
           },
           {
-            text: 'Oui',
+            text: 'Importer',
             handler: () => {
-              //this.shoppingService.readShoppingItems().then(data =>{
+
+              if(isSaveCurrent){
                 // Save the current list before erase it
                 this.shoppingService.createDuplicatedCurrentItems("sauvegarde du "+new Date().toLocaleDateString(), data).then(()=>{
                   // Replace the current shopping list by the list to be imported
-                  this.shoppingService.createShoppingItems(item.value);
-                  // Rediriger vers la page des articles
-                  this.navCtrl.parent.select(0);
-                  this.notificationService.showNotification("Liste importée avec succès !");
+                  this.importList(item);
+                  return;
                 })
-              //})
+              }
+              this.importList(item);
             }
           }
         ]
       });
       confirm.present();
     })    
+  }
+
+  private importList(item: ShoppingItemSaveType): void{
+
+    this.shoppingService.createShoppingItems(item.value);
+    // Rediriger vers la page des articles
+    this.navCtrl.parent.select(0);
+    this.notificationService.showNotification("Liste importée avec succès !");
   }
 
   /**
@@ -170,11 +176,19 @@ export class SaveListPage {
           }
         },
         {
-          text: 'Importer la liste',
+          text: 'Importer sans enregistrer la liste en cours',
           icon: 'ios-download-outline',
           role: 'destructive',
           handler: () => {
-            this.importDuplicatedList(item);
+            this.importDuplicatedList(item, false);
+          }
+        },
+        {
+          text: 'Importer puis enregistrer la liste en cours',
+          icon: 'ios-download-outline',
+          role: 'destructive',
+          handler: () => {
+            this.importDuplicatedList(item, true);
           }
         },
         {

@@ -1,7 +1,7 @@
 import {ItemGroupData} from '../../data/item-group-data';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
-import { ItemGroup } from '../model/sample-interface';
+import { IonicPage, NavController, NavParams, AlertController, FabContainer } from 'ionic-angular';
+import { ItemGroup, ShoppingItem } from '../model/sample-interface';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 import _ from "lodash";
 import { Utils } from '../model/utils';
@@ -27,21 +27,7 @@ export class ItemGroupPage {
 
 
   constructor(public navCtrl: NavController, public shoppingService: ShoppingServiceProvider, public alertCtrl: AlertController) {
-    /*this.itemGroup = {
-      itemGroupId : 0, itemGroupLabel : "Tous", itemGroupValue : "any" , isActive : true, isDisabled: true
-    };*/
 
-    this.shoppingService.readShoppingItemsGroup().then(data => {
-      
-      this.itemsGroup = data ;
-
-      if(this.itemsGroup.length == 0) {
-        var arr : ItemGroup[] = [];
-        arr.push(this.itemGroup);
-        this.itemsGroup = arr;
-        this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
-      }
-    });
   }
 
   private resetItemGroup(): void{
@@ -51,26 +37,26 @@ export class ItemGroupPage {
     })
   }
 
-  private getItemsGroup() : void{
-    this.shoppingService.readShoppingItemsGroup().then(data => {
-      
+  private getItemsGroup() : Promise<ItemGroup[]>{
+    return this.shoppingService.readShoppingItemsGroup().then(data => {
       this.itemsGroup = data ;
 
-      if(this.itemsGroup.length == 0) {
-        var arr : ItemGroup[] = [];
-        arr.push(this.itemGroup);
-        this.itemsGroup = arr;
-        this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
-      }
+      return this.itemsGroup;
     });
   }
 
   ionViewDidLoad() {
 
-    console.log('ionViewDidLoad ItemGroupPage');
+    this.getItemsGroup();
   }
 
-  private addItemGroup(): void{
+  /**
+   * Adds a new item group
+   *
+   * @public
+   * @memberof ItemGroupPage
+   */
+  public addItemGroup(fab: FabContainer): void{
 
     let prompt = this.alertCtrl.create({
       title: 'Ajouter une catégorie',
@@ -94,7 +80,7 @@ export class ItemGroupPage {
           
             var newItemGroup : ItemGroup = {itemGroupId : null, itemGroupLabel : "", itemGroupValue : "" , isActive : true, isDisabled: false};
            
-            this.shoppingService.readShoppingItemsGroup().then( list => {
+            this.getItemsGroup().then( list => {
              
               newItemGroup.itemGroupId = null; //parseInt(_.max(Object.keys(list))) + 1;
               newItemGroup.itemGroupLabel = data.value;
@@ -105,47 +91,48 @@ export class ItemGroupPage {
                 list.push(newItemGroup);
               }   
 
-              this.shoppingService.createShoppingItemsGroup(list).then(addedItems => {
-                this.itemsGroup = list;
-              })
+              this.shoppingService.createShoppingItemsGroup(list).then(val =>{
+                this.itemsGroup = val;
+              });
             });
           }
         }
       ]
     });
     prompt.present();
+
+    fab.close();
+
   }
 
   /**
-   * Update and save item group activation
+   * Activate or deactivate an item group activation
    * 
-   * @private
+   * @public
    * @param {ItemGroup} itemGroup 
    * @memberof ItemGroupPage
    */
-  private onToggle(itemGroup : ItemGroup) {
+  public onToggle(itemGroup : ItemGroup, index: number) {
     this.isActivate = itemGroup.isActive ;
 
-    this.itemsGroup.map((val: ItemGroup) => { 
-      if((val.itemGroupLabel == itemGroup.itemGroupLabel) || val.itemGroupValue == itemGroup.itemGroupValue) {
-        val.isActive = this.isActivate;
-      }
-      return val;
-    });
+    this.itemsGroup[index].isActive = itemGroup.isActive;
+
     this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
   }
 
   /**
    * Initialize the list of catégories to default ones.
    * 
-   * @private
+   * @public
    * @memberof ItemGroupPage
    */
-  private initializeItemGroup(){
+  public initializeItemGroup(fab: FabContainer){
 
+    fab.close();
+    
     let confirm = this.alertCtrl.create({
       title: 'Remise à zéro',
-      message: 'Etes vous sûrs de vouloir réinitialiser la liste des catégories ?',
+      message: 'Etes vous sûrs de vouloir supprimer la liste des catégories ?',
       buttons: [
         {
           text: 'Non',
@@ -164,11 +151,17 @@ export class ItemGroupPage {
     confirm.present();
   }
 
-
-  private delete(item : ItemGroup, index: number){
+  /**
+   * Removes Item
+   *
+   * @param {ItemGroup} item
+   * @param {number} index
+   * @memberof ItemGroupPage
+   */
+  public delete(item : ItemGroup, index: number){
     let confirm = this.alertCtrl.create({
       title: 'Suppression',
-      message: 'Etes vous sûrs de vouloir supprimer cette catégorie? vos articles seront classés dans la catégories "Tous"!',
+      message: 'Etes vous sûrs de vouloir supprimer cette catégorie? Vos articles seront classés dans la catégories "Tous"!',
       buttons: [
         {
           text: 'Non',
@@ -194,13 +187,63 @@ export class ItemGroupPage {
     confirm.present();
   }
 
-
-  private reorderItems(indexes) {
+  /**
+   * Reorder items
+   *
+   * @public
+   * @param {*} indexes
+   * @memberof ItemGroupPage
+   */
+  public reorderItems(indexes) {
     let element = this.itemsGroup[indexes.from];
     this.itemsGroup.splice(indexes.from, 1);
     this.itemsGroup.splice(indexes.to, 0, element);
 
     this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
+  }
+
+  /**
+   * Updates item group
+   *
+   * @param {ItemGroup} itemGroupToReplace
+   * @param {number} index
+   * @memberof ItemGroupPage
+   */
+  public update(itemGroupToReplace: ItemGroup, index: number): void{
+  
+    var oldName: string = this.itemsGroup[index].itemGroupLabel;
+    let alert = this.alertCtrl.create();
+    alert.setTitle("Modifier");
+    
+      alert.addInput({
+        type: 'text',
+        name: 'item',
+        value: itemGroupToReplace.itemGroupLabel,
+        placeholder: "Nom de la catégorie"
+      });
+
+      alert.addButton("Annuler");
+      alert.addButton({
+        text: 'Ok',
+        handler: data => {     
+          if(this.itemsGroup[index] != undefined && itemGroupToReplace.itemGroupLabel != data.item){
+            this.itemsGroup[index].itemGroupLabel = data.item;
+            this.shoppingService.createShoppingItemsGroup(this.itemsGroup).then((itemsGroup: ItemGroup[])=>{
+
+              this.shoppingService.readShoppingItems().then(items=>{
+                items.forEach((val: ShoppingItem, index:number)=>{
+                  if(val.itemGroup == oldName){
+                    val.itemGroup = data.item;
+                  }
+                });
+                this.shoppingService.createShoppingItems(items);
+              })
+            });
+          }
+        }
+      });
+
+      alert.present();
   }
 
 }

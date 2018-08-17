@@ -6,7 +6,7 @@ import { ItemGroupPage } from '../item-group/item-group';
 import { SaveListPage } from '../save-list/save-list';
 import { HomePage } from '../home/home';
 import { FormBuilder } from '@angular/forms';
-import {AlertController, NavController} from 'ionic-angular';
+import {AlertController, NavController, Events} from 'ionic-angular';
 
 @Component({
   templateUrl: 'tabs.html'
@@ -18,12 +18,20 @@ export class TabsPage {
     saveListPage = SaveListPage;
     exportPage = "";
 
-    constructor(  public navCtrl: NavController,
+    boughtItems: number;
+
+    constructor(  public events: Events, 
+                  public navCtrl: NavController,
                     public shoppingService: ShoppingServiceProvider, 
                     public notificationService: NotificationManagerProvider,  
                     public formBuilder : FormBuilder, 
                     public alertCtrl: AlertController) {
-
+                    
+                    
+                      
+                      events.subscribe('cart:updated', _badgeValue => {
+                        this.boughtItems = _badgeValue;
+                  });
     }
   
 }

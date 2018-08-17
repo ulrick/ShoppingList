@@ -1,7 +1,7 @@
 import {Utils} from '../model/utils';
 //import { FirebaseProvider } from './../../providers/firebase/firebase';
-import { Component } from '@angular/core';
-import { NavController, IonicPage, ToastController, AlertController } from 'ionic-angular';
+import { Component  } from '@angular/core';
+import { NavController, IonicPage, ToastController, AlertController, FabContainer, Events, ItemSliding } from 'ionic-angular';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ShoppingItem, ItemGroup, ShoppingItemSaveType } from '../model/sample-interface';
@@ -10,7 +10,7 @@ import { ItemGroupPage } from '../item-group/item-group';
 import { ItemGroupData } from '../../data/item-group-data';
 import { NotificationManagerProvider } from '../../providers/notification-manager/notification-manager';
 import { SaveListPage } from '../save-list/save-list';
-//import { FirebaseListObservable } from 'angularfire2/database'; 
+import { Observable } from '../../../node_modules/rxjs/Observable';
 
 @IonicPage({
   name: 'HomePage',
@@ -19,7 +19,7 @@ import { SaveListPage } from '../save-list/save-list';
 @Component({
   selector: 'home',
   templateUrl: 'home.html',
-  providers: [ShoppingServiceProvider, NotificationManagerProvider]
+  providers: [ShoppingServiceProvider, NotificationManagerProvider, ItemSliding]
 })
 export class HomePage {
 
@@ -29,10 +29,14 @@ export class HomePage {
   private existingItemsGroup : string[] = [];
   public itemForm : FormGroup;
   private isBought : boolean = false;
-  //private objectKeys : string[] = [];
-  //private itemsGroupByCategory : {[key:string] : ShoppingItem} = {};
+  private isUpdating: boolean = false;
+  private editableItem: ShoppingItem;
+  private itemGroups: ItemGroup[] = [];
+  public boughtItems: number = 0 ;
  
-  constructor(public navCtrl: NavController, 
+  constructor(public events: Events,
+              public slidingItem: ItemSliding,
+              public navCtrl: NavController, 
               public shoppingService: ShoppingServiceProvider, 
               public notificationService: NotificationManagerProvider,  
               public formBuilder : FormBuilder, 
@@ -42,46 +46,25 @@ export class HomePage {
       "itemName" : ["", Validators.required]
     });
     
-    this.getShoppingItems().then((data)=>{
-      this.updateWithExistingItemsGroup();
-    });
-    
-    //this.initOrRefreshPage();
+    // this.getShoppingItems().then((data)=>{
+    //   this.updateWithExistingItemsGroup();
+    // });
 
   }
   
   protected ionViewWillEnter() {
     this.getShoppingItems().then((data)=>{
       this.updateWithExistingItemsGroup();
+      this.updateCart();
     });
-    //this.initOrRefreshPage();
+    
   }
 
   protected ionViewDidEnter() {
-    this.getShoppingItems().then((data)=>{
-      this.updateWithExistingItemsGroup();
-    });
-    //this.initOrRefreshPage();
+    // this.getShoppingItems().then((data)=>{
+    //   this.updateWithExistingItemsGroup();
+    // });
   }
-
-  /*private initOrRefreshPage(): void{
-
-    this.getShoppingItems().then((data)=>{
-      this.itemsGroupByCategory = _.groupBy(data, (val: ShoppingItem)=>{
-        return val.itemGroup;
-      });
-
-      //this.objectKeys = Object.keys(this.itemsGroupByCategory);
-      this.shoppingService.readShoppingItemsGroup().then((groupList) => {
-
-        this.objectKeys = _.intersectionWith( groupList.map(val => {
-          
-            return val.itemGroupLabel;
-          }), Object.keys(this.itemsGroupByCategory), _.isEqual)
-      })
-
-    })
-  }*/
 
   /**
    * Update category of item if add, or delete an item
@@ -103,7 +86,9 @@ export class HomePage {
             return val;
           });
         });
-      } 
+      }
+      
+      this.itemGroups = groupList;
     })
   }
 
@@ -117,11 +102,12 @@ export class HomePage {
     
     return this.shoppingService.readShoppingItems().then(data => {
       this.shoppingItems = data;
+      this.boughtItems = data.filter(val=>{return val.isBought == true}).length;
     
       if(!this.shoppingItems) {
         this.shoppingItems = [];
       }
-      return this.shoppingItems
+      return this.shoppingItems;
     });
   }
 
@@ -135,53 +121,55 @@ export class HomePage {
 
     if(this.newItem != "") {
 
-        let alert = this.alertCtrl.create();
-        alert.setTitle("Catégorie d'article");
-        alert.setCssClass('custom-alert');
-        
-        this.shoppingService.readShoppingItemsGroup().then((groupList) => {
-         
-          groupList.forEach((value, index) => {
-            if(value.isActive){
-              alert.addInput({
-                type: 'radio',
-                id : index.toString(),
-                label: value.itemGroupLabel,
-                value: value.itemGroupLabel,//Utils.removeAccents(value+'_'+index.toString()).toLowerCase(),
-                checked: value.itemGroupLabel == "Tous" ? true : false
-              });
-            }
-          });
-        
-          alert.addButton({
-            text: 'Nouveau',
-            handler: data => {
-              //this.navCtrl.push(ItemGroupPage);
-              this.navCtrl.parent.select(1);
-            }
-          });
+      let alert = this.alertCtrl.create();
+      alert.setTitle("Catégorie d'article");
+      alert.setCssClass('custom-alert');
+      
+      this.shoppingService.readShoppingItemsGroup().then((groupList) => {
+      
+        groupList.forEach((value, index) => {
+          if(value.isActive){
+            alert.addInput({
+              type: 'radio',
+              id : index.toString(),
+              label: value.itemGroupLabel,
+              value: value.itemGroupLabel,//Utils.removeAccents(value+'_'+index.toString()).toLowerCase(),
+              checked: value.itemGroupLabel == "Tous" ? true : false
+            });
+          }
+        });
+      
+        alert.addButton({
+          text: 'Nouveau',
+          handler: data => {
+            //this.navCtrl.push(ItemGroupPage);
+            this.navCtrl.parent.select(1);
+          }
+        });
 
-          alert.addButton('Annuler');
+        alert.addButton('Annuler');
 
-          alert.addButton({
-            text: 'OK',
-            handler: data => {
-              var itemList  = this.shoppingItems.map((val : ShoppingItem) => {
-                if (val && val.itemName != "" )
-                  return Utils.removeAccents(val.itemName).toLowerCase();
-              });
-              // If not found, add
-              if(itemList != null && itemList.indexOf(this.newItem.toLowerCase()) === -1) {
-                this.createNewItem(data);
-              }
-              else {
-                this.confirmItemDuplication(data);
-              }
+        alert.addButton({
+          text: 'OK',
+          handler: data => {
+            
+            var itemList  = this.shoppingItems.map((val : ShoppingItem) => {
+              if (val && val.itemName != "" )
+                //return Utils.removeAccents(val.itemName).toLowerCase();
+                return val.itemName.toLowerCase();
+            });
+            // If not found, add
+            if(itemList != null && itemList.indexOf(this.newItem.toLowerCase()) === -1) {
+              this.createNewItem(data);
             }
-          });
+            else {
+              this.confirmItemDuplication(data);
+            }
+          }
+        });
 
-          alert.present();
-      });
+        alert.present();
+      }); 
     }
   }
 
@@ -197,7 +185,7 @@ export class HomePage {
 
     var shoppingItem : ShoppingItem = {itemId:null, itemName : "", itemGroup: "", isBought : false};
     // Save into database
-    return this.shoppingService.readShoppingItems().then( itemList => {
+    return this.getShoppingItems().then( itemList => {
 
       shoppingItem.itemId = null; // _.max(_.map(itemList, (val, index)=>{return index}));
       shoppingItem.itemName = this.newItem; 
@@ -211,13 +199,11 @@ export class HomePage {
         if(this.existingItemsGroup.indexOf(data) == -1)
           this.existingItemsGroup.push(data);
           
-        this.shoppingItems = itemList;
-
+        this.shoppingItems = addedItems;
         this.newItem = "";
       });
     }).then(val=>{
       this.updateWithExistingItemsGroup();
-      //this.initOrRefreshPage();
     });
   }
 
@@ -252,14 +238,15 @@ export class HomePage {
   }
 
   /**
-   * Delete an item and save the new item list 
-   * 
-   * @param {ShoppingItem} item 
-   * @param {number} index 
+   * Deletes an item and save the new item list
+   *
+   * @param {ShoppingItem} item
+   * @param {number} index
+   * @param {ItemSliding} slidingItem
    * @memberof HomePage
    */
-  public delete(item : ShoppingItem, index: number) {
-    
+  public delete(item : ShoppingItem, index: number, slidingItem: ItemSliding) {
+    slidingItem.close();
     this.shoppingItems.splice(index, 1);
     
     this.shoppingService.createShoppingItems(this.shoppingItems).then(()=>{
@@ -267,18 +254,66 @@ export class HomePage {
     });
 
     this.updateWithExistingItemsGroup();
+    this.updateCart();
   
+  }
+
+
+  /**
+   * Modify selected item
+   *
+   * @param {ShoppingItem} itemToReplace
+   * @param {number} index
+   * @param {ItemSliding} slidingItem
+   * @memberof HomePage
+   */
+  public update(itemToReplace: ShoppingItem, index: number, slidingItem: ItemSliding): void{
+  
+    if(slidingItem) slidingItem.close();
+    let alert = this.alertCtrl.create();
+    alert.setTitle("Modifier");
+    
+      alert.addInput({
+        type: 'text',
+        name: 'item',
+        value: itemToReplace.itemName,
+        placeholder: "Nom d'article"
+      });
+
+      alert.addButton("Annuler");
+      alert.addButton({
+        text: 'Ok',
+        handler: data => {     
+          if(itemToReplace.itemName != data.item){
+            this.shoppingItems[index].itemName = data.item;
+            this.shoppingService.createShoppingItems(this.shoppingItems);
+          }
+        }
+      });
+
+      alert.present();
+  }
+
+  private findShoppingItem(name: string, groupItem?: string): ShoppingItem{
+
+    return this.shoppingItems.find((val: ShoppingItem, index: number)=>{ 
+      var isAvailable: boolean = val.itemName.toLowerCase() == name.toLowerCase() ;
+      return groupItem ? isAvailable && val.itemGroup.toLowerCase() == groupItem.toLowerCase() :  isAvailable;
+    })
   }
 
   /**
    * Check or barre an item if it's already pourchased
    * 
-   * @private
+   * @public
    * @param {ShoppingItem} item 
+   * @param {ItemSliding} slidingItem 
    * @memberof HomePage
    */
-  private onBought(item : ShoppingItem) : void {
+  public onBought(item : ShoppingItem, slidingItem: ItemSliding) : void {
    
+    slidingItem.close();
+
     this.isBought = item.isBought == true ? false : true;
     item.isBought = this.isBought;
 
@@ -290,12 +325,25 @@ export class HomePage {
       return val;
     });
     // Then save the new array
-    this.shoppingService.createShoppingItems(this.shoppingItems);
+    this.shoppingService.createShoppingItems(this.shoppingItems).then((items: ShoppingItem[])=>{
+      this.updateCart();
+    });
   }
 
-  
+  /**
+   * Updates the number of items in the cart
+   *
+   * @private
+   * @memberof HomePage
+   */
+  private updateCart(): void{
+    this.boughtItems = this.shoppingItems.filter(val=>{return val.isBought == true}).length;
+      this.events.publish('cart:updated', this.boughtItems);
+  }
 
-  public saveItemList(){
+
+  public saveItemList(fab: FabContainer){
+    fab.close();
     if(this.shoppingItems != null && this.shoppingItems.length > 0){
         let alert = this.alertCtrl.create({
           title: 'Exporter la liste',
@@ -339,7 +387,17 @@ export class HomePage {
     }
   }
 
-  private deleteList(): void {
+  /**
+   * Removes items list
+   *
+   * @public
+   * @param {FabContainer} fab
+   * @memberof HomePage
+   */
+  public deleteList(fab: FabContainer): void {
+    
+    fab.close();
+    
     let confirm = this.alertCtrl.create({
       title: 'Confirmer',
       message: "Etes vous sûrs de vouloir supprimer la liste en cours? ",
@@ -353,7 +411,6 @@ export class HomePage {
           text: 'Oui',
           handler: () => {
             this.shoppingService.removeShoppingItems().then(()=>{
-              //this.initOrRefreshPage();
               this.getShoppingItems().then((data)=>{
                 this.updateWithExistingItemsGroup();
               });
@@ -364,6 +421,8 @@ export class HomePage {
       ]
     });
     confirm.present();
+
+    this.updateCart();
   }
 
 }

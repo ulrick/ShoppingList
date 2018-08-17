@@ -37,9 +37,18 @@ export class ShoppingServiceProvider {
     });
   }
  
-  public createShoppingItems(items : any) : Promise<void>{
+  /**
+   * Save item list into database
+   *
+   * @param {*} items
+   * @returns {Promise<ShoppingItem[]>}
+   * @memberof ShoppingServiceProvider
+   */
+  public createShoppingItems(items : any) : Promise<ShoppingItem[]>{
+    //var promise
       return this.storage.set('items', items).then( val => {
-        console.log("item added ! ");
+        //console.log("test create ",val)
+        return Promise.resolve(val);
       });
   }
 
@@ -68,12 +77,12 @@ export class ShoppingServiceProvider {
    * Save category list into database
    * 
    * @param {*} itemsGroup 
-   * @returns {Promise<void>} 
+   * @returns {Promise<ItemGroup[]>} 
    * @memberof ShoppingServiceProvider
    */
-  public createShoppingItemsGroup(itemsGroup : any) : Promise<void>{
+  public createShoppingItemsGroup(itemsGroup : any) : Promise<ItemGroup[]>{
       return this.storage.set('items-group', itemsGroup).then( (val : ItemGroup[]) => {
-        //return null;
+        return Promise.resolve(val);
       });
   }
   /**
@@ -106,7 +115,6 @@ export class ShoppingServiceProvider {
    */
   public createDuplicatedItems(items : any) : Promise<void>{
     return this.storage.set('items-save', items).then( (val : ShoppingItemSaveType[]) => {
-      //return null;
     });
   }
   /**
@@ -128,8 +136,6 @@ export class ShoppingServiceProvider {
  
 
   private handleError(error: any = "Une erreur est survenue!"): Promise<any> {
-    //let notification = this.toastCtrl.sendNotification(error);
-    console.error('An error occurred', error);
     return Promise.reject(error.message || error);
   }
 
