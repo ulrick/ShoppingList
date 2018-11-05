@@ -31,3 +31,16 @@ export interface ShoppingItemSaveType {
     value: ShoppingItem[];
     date: number;
 }
+
+/**
+ *
+ *
+ * @export
+ * @interface Parameter
+ */
+export interface Parameter {
+    id: number;
+    name: string;
+    isActive: boolean;
+    isDisabled: boolean;
+}

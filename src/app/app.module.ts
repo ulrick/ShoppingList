@@ -16,6 +16,10 @@ import { SaveListPage } from '../pages/save-list/save-list';
 import { SaveListDetailPage } from '../pages/save-list-detail/save-list-detail';
 import { NotificationManagerProvider } from '../providers/notification-manager/notification-manager';
 import { TabsPage } from '../pages/tabs/tabs';
+import { ConfigPage } from '../pages/config/config';
+import { PopoverPage } from '../pages/popover/popover';
+import { ItemEditorPage } from '../pages/item-editor/item-editor';
+import { SMS } from '@ionic-native/sms';
 
 @NgModule({
   declarations: [
@@ -24,7 +28,10 @@ import { TabsPage } from '../pages/tabs/tabs';
     ItemGroupPage,
     SaveListPage,
     SaveListDetailPage,
-    TabsPage
+    TabsPage,
+    ConfigPage,
+    PopoverPage,
+    ItemEditorPage
   ],
   imports: [
     BrowserModule,
@@ -33,6 +40,7 @@ import { TabsPage } from '../pages/tabs/tabs';
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot({
       name: 'shopping_db',
+      storeName: 'shoppingList',
       driverOrder: ['indexeddb', 'sqlite', 'websql']
     })
   ],
@@ -43,7 +51,10 @@ import { TabsPage } from '../pages/tabs/tabs';
     ItemGroupPage,
     SaveListPage,
     SaveListDetailPage,
-    TabsPage
+    TabsPage,
+    ConfigPage,
+    PopoverPage,
+    ItemEditorPage
   ],
   providers: [
     StatusBar,
@@ -52,7 +63,8 @@ import { TabsPage } from '../pages/tabs/tabs';
     ShoppingServiceProvider,
     NativeStorage,
     NotificationManagerProvider,
-    ItemSliding
+    ItemSliding,
+    SMS
   ]
 })
 export class AppModule {}

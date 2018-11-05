@@ -1,5 +1,10 @@
 page-item-group {
     .item-group-label{
         padding-right: 10% !important;
+
+        .item-group{
+            text-transform: capitalize;
+        }
     }
+
 }

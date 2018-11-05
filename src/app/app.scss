@@ -22,7 +22,9 @@
 .toast-class .toast-wrapper{
     width: 45%;
     border-radius: 8px;
-    background: rgba(60,60,60,0.7);
+    //background: rgba(60,60,60,0.7);
+    background: #FBC13B;
+    opacity: 0.8 !important;
 }
 
 .toast-class .toast-wrapper .toast-container .toast-message{
@@ -35,5 +37,48 @@
 }
 
 .action-sheet-custom .action-sheet-container .action-sheet-button .action-sheet-icon{
-    color: #37B9D3;
+    color: #0FAEB0;
+}
+
+.toolbar .toolbar-background {
+    background: #0FAEB0;
+    background: -webkit-gradient(linear, right top, left top, from(#56DCDF), to(#0FAEB0));
+    background: linear-gradient(to right, #56DCDF 0%, #0FAEB0 100%);
+    
+}
+
+.toolbar{
+    text-transform: uppercase;
+}
+
+.toolbar-title{
+    font-family: "Open Sans";
+    font-size: 1.75rem !important;
+}
+
+.item{
+    font-family: "Open Sans", "Roboto" !important;
+    color: #333 !important;
+    letter-spacing: 0.5px;
+}
+
+.selectable-item{
+    -webkit-user-select: text !important; 
+    -khtml-user-select: text !important; 
+    -moz-user-select: text !important; 
+    -ms-user-select: text !important; 
+    -o-user-select: text !important; 
+    user-select: text !important;
+}
+
+.tabs {
+    .tab-button, .tab-button-icon {
+        color: #D35137; 
+    }
+}
+
+ion-app {
+    font-family: "Open Sans", "Roboto" !important;
+    font-size: 1.4rem;
+    background-color: #f7f7f7;
 }

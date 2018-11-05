@@ -156,12 +156,12 @@ export class SaveListPage {
   /**
    * Component to purpose actions to do for saved list
    * 
-   * @private
+   * @public
    * @param {ShoppingItemSaveType} item 
    * @param {number} index 
    * @memberof SaveListPage
    */
-  private presentActionSheet(item: ShoppingItemSaveType, index: number) {
+  public presentActionSheet(item: ShoppingItemSaveType, index: number) {
 
     let actionSheet = this.actionSheetCtrl.create({
       title: '',

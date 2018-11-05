@@ -7,6 +7,7 @@ import { SaveListPage } from '../save-list/save-list';
 import { HomePage } from '../home/home';
 import { FormBuilder } from '@angular/forms';
 import {AlertController, NavController, Events} from 'ionic-angular';
+import { ConfigPage } from '../config/config';
 
 @Component({
   templateUrl: 'tabs.html'
@@ -16,6 +17,7 @@ export class TabsPage {
     homePage = HomePage;
     itemCategoryPage = ItemGroupPage;
     saveListPage = SaveListPage;
+    configPage = ConfigPage
     exportPage = "";
 
     boughtItems: number;

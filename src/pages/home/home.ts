@@ -1,16 +1,18 @@
-import {Utils} from '../model/utils';
+//import {Utils} from '../model/utils';
 //import { FirebaseProvider } from './../../providers/firebase/firebase';
-import { Component  } from '@angular/core';
-import { NavController, IonicPage, ToastController, AlertController, FabContainer, Events, ItemSliding } from 'ionic-angular';
+import { Component, ViewChild  } from '@angular/core';
+import { NavController, IonicPage, AlertController, FabContainer, Events, ItemSliding, List, PopoverController } from 'ionic-angular';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ShoppingItem, ItemGroup, ShoppingItemSaveType } from '../model/sample-interface';
+import { ShoppingItem, ItemGroup, Parameter } from '../model/sample-interface';
 import _ from "lodash";
-import { ItemGroupPage } from '../item-group/item-group';
-import { ItemGroupData } from '../../data/item-group-data';
 import { NotificationManagerProvider } from '../../providers/notification-manager/notification-manager';
-import { SaveListPage } from '../save-list/save-list';
-import { Observable } from '../../../node_modules/rxjs/Observable';
+import { PopoverPage } from '../popover/popover';
+import { ItemEditorPage } from '../item-editor/item-editor';
+import { SMS } from '@ionic-native/sms';
+//import { SaveListPage } from '../save-list/save-list';
+//import { Observable } from '../../../node_modules/rxjs/Observable';
+
 
 @IonicPage({
   name: 'HomePage',
@@ -24,15 +26,16 @@ import { Observable } from '../../../node_modules/rxjs/Observable';
 export class HomePage {
 
   private newItem : string = "";
-  
   private shoppingItems : ShoppingItem[] = [];
   private existingItemsGroup : string[] = [];
   public itemForm : FormGroup;
   private isBought : boolean = false;
-  private isUpdating: boolean = false;
-  private editableItem: ShoppingItem;
   private itemGroups: ItemGroup[] = [];
   public boughtItems: number = 0 ;
+  public parameters: Parameter[] = [];
+  private SelectedItem: ShoppingItem;
+  
+  @ViewChild('myList', {read: List}) list: List;
  
   constructor(public events: Events,
               public slidingItem: ItemSliding,
@@ -40,7 +43,8 @@ export class HomePage {
               public shoppingService: ShoppingServiceProvider, 
               public notificationService: NotificationManagerProvider,  
               public formBuilder : FormBuilder, 
-              public alertCtrl: AlertController) {
+              public alertCtrl: AlertController, 
+              public popoverCtrl: PopoverController, public sms: SMS) {
 
     this.itemForm = formBuilder.group({
       "itemName" : ["", Validators.required]
@@ -51,12 +55,19 @@ export class HomePage {
     // });
 
   }
-  
+
   protected ionViewWillEnter() {
-    this.getShoppingItems().then((data)=>{
-      this.updateWithExistingItemsGroup();
-      this.updateCart();
-    });
+
+    this.shoppingService.readConfig().then((data: Parameter[])=>{
+      this.parameters = data;
+    })
+    .then(()=>{
+      this.getShoppingItems().then((data)=>{
+        this.updateWithExistingItemsGroup();
+        this.updateCart();
+      });
+    })
+    
     
   }
 
@@ -121,55 +132,76 @@ export class HomePage {
 
     if(this.newItem != "") {
 
-      let alert = this.alertCtrl.create();
-      alert.setTitle("Catégorie d'article");
-      alert.setCssClass('custom-alert');
-      
-      this.shoppingService.readShoppingItemsGroup().then((groupList) => {
-      
-        groupList.forEach((value, index) => {
-          if(value.isActive){
-            alert.addInput({
-              type: 'radio',
-              id : index.toString(),
-              label: value.itemGroupLabel,
-              value: value.itemGroupLabel,//Utils.removeAccents(value+'_'+index.toString()).toLowerCase(),
-              checked: value.itemGroupLabel == "Tous" ? true : false
+        var categoryParam: Parameter = this.parameters.find(val=>{return val.id == 0});
+
+        if((categoryParam != null || categoryParam != undefined) && categoryParam.isActive){
+
+          let alert = this.alertCtrl.create();
+          alert.setTitle("Catégorie d'article");
+          alert.setCssClass('custom-alert');
+          
+          this.shoppingService.readShoppingItemsGroup().then((groupList) => {
+          
+            groupList.forEach((value, index) => {
+              if(value.isActive){
+                alert.addInput({
+                  type: 'radio',
+                  id : index.toString(),
+                  label: value.itemGroupLabel,
+                  value: value.itemGroupLabel,//Utils.removeAccents(value+'_'+index.toString()).toLowerCase(),
+                  checked: value.itemGroupLabel == "Tous" ? true : false
+                });
+              }
             });
-          }
-        });
-      
-        alert.addButton({
-          text: 'Nouveau',
-          handler: data => {
-            //this.navCtrl.push(ItemGroupPage);
-            this.navCtrl.parent.select(1);
-          }
-        });
-
-        alert.addButton('Annuler');
-
-        alert.addButton({
-          text: 'OK',
-          handler: data => {
-            
-            var itemList  = this.shoppingItems.map((val : ShoppingItem) => {
-              if (val && val.itemName != "" )
-                //return Utils.removeAccents(val.itemName).toLowerCase();
-                return val.itemName.toLowerCase();
+          
+            alert.addButton({
+              text: 'Nouveau',
+              handler: data => {
+                //this.navCtrl.push(ItemGroupPage);
+                this.navCtrl.parent.select(1);
+              }
             });
-            // If not found, add
-            if(itemList != null && itemList.indexOf(this.newItem.toLowerCase()) === -1) {
-              this.createNewItem(data);
-            }
-            else {
-              this.confirmItemDuplication(data);
-            }
-          }
-        });
 
-        alert.present();
-      }); 
+            alert.addButton('Annuler');
+
+            alert.addButton({
+              text: 'OK',
+              handler: data => {
+                this.saveItem(data);
+              }
+            });
+
+            alert.present();
+          });
+        }
+        else{
+          this.saveItem();
+        }   
+    }
+  }
+
+  /**
+   *
+   *
+   * @private
+   * @param {*} group
+   * @memberof HomePage
+   */
+  private saveItem(group?: any){
+
+    var data = group ? group : "Tous";
+
+    var itemList  = this.shoppingItems.map((val : ShoppingItem) => {
+      if (val && val.itemName != "" )
+        //return Utils.removeAccents(val.itemName).toLowerCase();
+        return val.itemName.toLowerCase();
+    });
+    // If not found, add
+    if(itemList != null && itemList.indexOf(this.newItem.toLowerCase()) === -1) {
+      this.createNewItem(data);
+    }
+    else {
+      this.confirmItemDuplication(data);
     }
   }
 
@@ -184,6 +216,13 @@ export class HomePage {
   private createNewItem(data : any) : Promise<void> {
 
     var shoppingItem : ShoppingItem = {itemId:null, itemName : "", itemGroup: "", isBought : false};
+    var isAtTopOfList: boolean = true;
+
+    var insertParam: Parameter = this.parameters.find(val=>{return val.id == 1});
+
+    if((insertParam != null || insertParam != undefined) && !insertParam.isActive){
+      isAtTopOfList = false;
+    }
     // Save into database
     return this.getShoppingItems().then( itemList => {
 
@@ -192,7 +231,7 @@ export class HomePage {
       shoppingItem.itemGroup = data;
       shoppingItem.isBought = false;
 
-      itemList.unshift(shoppingItem);
+      isAtTopOfList ? itemList.unshift(shoppingItem): itemList.push(shoppingItem);
 
       this.shoppingService.createShoppingItems(itemList).then(addedItems => {
 
@@ -206,6 +245,8 @@ export class HomePage {
       this.updateWithExistingItemsGroup();
     });
   }
+
+
 
   /**
    * Add duplicated Item
@@ -258,6 +299,23 @@ export class HomePage {
   
   }
 
+  /**
+   * Slide item to the right
+   *
+   * @param {ItemSliding} slidingItem
+   * @memberof HomePage
+   */
+  public openSlide(item: ShoppingItem, slidingItem: ItemSliding): void{
+
+    // Intentionaly set it twice
+    slidingItem.startSliding(0);
+    slidingItem.moveSliding(0);
+    slidingItem.moveSliding(-150);
+
+    // console.log("open amount ", slidingItem.getOpenAmount(), " Pourcent ", slidingItem.getSlidingPercent() );
+    
+  }
+
 
   /**
    * Modify selected item
@@ -268,38 +326,11 @@ export class HomePage {
    * @memberof HomePage
    */
   public update(itemToReplace: ShoppingItem, index: number, slidingItem: ItemSliding): void{
-  
-    if(slidingItem) slidingItem.close();
-    let alert = this.alertCtrl.create();
-    alert.setTitle("Modifier");
     
-      alert.addInput({
-        type: 'text',
-        name: 'item',
-        value: itemToReplace.itemName,
-        placeholder: "Nom d'article"
-      });
+    this.navCtrl.push(ItemEditorPage, {"index": index, "itemToReplace": itemToReplace, "shoppingItems": this.shoppingItems }, {animate: true, direction: 'forward'});
+    if(slidingItem) slidingItem.close();
 
-      alert.addButton("Annuler");
-      alert.addButton({
-        text: 'Ok',
-        handler: data => {     
-          if(itemToReplace.itemName != data.item){
-            this.shoppingItems[index].itemName = data.item;
-            this.shoppingService.createShoppingItems(this.shoppingItems);
-          }
-        }
-      });
-
-      alert.present();
-  }
-
-  private findShoppingItem(name: string, groupItem?: string): ShoppingItem{
-
-    return this.shoppingItems.find((val: ShoppingItem, index: number)=>{ 
-      var isAvailable: boolean = val.itemName.toLowerCase() == name.toLowerCase() ;
-      return groupItem ? isAvailable && val.itemGroup.toLowerCase() == groupItem.toLowerCase() :  isAvailable;
-    })
+    //this.SelectedItem = itemToReplace;
   }
 
   /**
@@ -342,11 +373,11 @@ export class HomePage {
   }
 
 
-  public saveItemList(fab: FabContainer){
-    fab.close();
+  public saveItemList(fab?: FabContainer){
+    //fab.close();
     if(this.shoppingItems != null && this.shoppingItems.length > 0){
         let alert = this.alertCtrl.create({
-          title: 'Exporter la liste',
+          title: 'Enregistrer la liste',
           inputs: [
             {
               name: 'listName',
@@ -394,17 +425,21 @@ export class HomePage {
    * @param {FabContainer} fab
    * @memberof HomePage
    */
-  public deleteList(fab: FabContainer): void {
+  public deleteList(fab?: FabContainer): void {
     
-    fab.close();
+    //fab.close();
     
+    if(this.shoppingItems.length == 0){
+      return;
+    }
+
     let confirm = this.alertCtrl.create({
       title: 'Confirmer',
       message: "Etes vous sûrs de vouloir supprimer la liste en cours? ",
       buttons: [
         {
           text: 'Non',
-          handler: () => {    
+          handler: () => {
           }
         },
         {
@@ -423,6 +458,71 @@ export class HomePage {
     confirm.present();
 
     this.updateCart();
+  }
+
+
+  /**
+   * Drags and drop to reoder items
+   *
+   * @param {*} indexes
+   * @memberof HomePage
+   */
+  public reorderItems(indexes) {
+    console.log("move place ", indexes);
+    let element = this.shoppingItems[indexes.from];
+    this.shoppingItems.splice(indexes.from, 1);
+    this.shoppingItems.splice(indexes.to, 0, element);
+
+    this.shoppingService.createShoppingItems(this.shoppingItems);
+  }
+
+  /**
+   * Sorts items by alphabetical order 
+   *
+   * @memberof HomePage
+   */
+  public sortItems(): void{
+
+    var sortList: ShoppingItem[] = this.shoppingItems.sort((a, b)=>{
+      var x = a.itemName.toLowerCase();
+      var y = b.itemName.toLowerCase();
+    
+      return x < y ? -1 : x > y ? 1 : 0
+    });
+
+    this.shoppingService.createShoppingItems(sortList);
+  }
+
+  /**
+   * Open popover
+   *
+   * @param {*} myEvent
+   * @memberof HomePage
+   */
+  public presentPopover(myEvent): void {
+    let popover = this.popoverCtrl.create(PopoverPage, {homePage: this});
+    popover.present({
+      ev: myEvent
+    });
+  }
+
+  public sendSms(): void{
+
+    var itemsToSend : string = "Liste de course: \n \n";
+    
+    itemsToSend = itemsToSend.concat(
+      this.shoppingItems.map((val)=>{
+      return val.itemName;
+    }).join(", \n") );
+
+    var options = {
+      replaceLineBreaks: true,
+      android: {
+        intent: 'INTENT' 
+      }
+    }
+
+    this.sms.send('', itemsToSend, options);
   }
 
 }

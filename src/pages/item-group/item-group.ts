@@ -1,9 +1,8 @@
-import {ItemGroupData} from '../../data/item-group-data';
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, FabContainer } from 'ionic-angular';
+import { IonicPage, NavController, AlertController, FabContainer } from 'ionic-angular';
 import { ItemGroup, ShoppingItem } from '../model/sample-interface';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
-import _ from "lodash";
+//import _ from "lodash";
 import { Utils } from '../model/utils';
 
 /**
@@ -22,8 +21,8 @@ import { Utils } from '../model/utils';
 export class ItemGroupPage {
 
   private itemsGroup : ItemGroup[] = [];
-  private itemGroup : ItemGroup;
-  private isActivate : boolean = true;
+  //private itemGroup : ItemGroup;
+  //private isActivate : boolean = true;
 
 
   constructor(public navCtrl: NavController, public shoppingService: ShoppingServiceProvider, public alertCtrl: AlertController) {
@@ -113,7 +112,7 @@ export class ItemGroupPage {
    * @memberof ItemGroupPage
    */
   public onToggle(itemGroup : ItemGroup, index: number) {
-    this.isActivate = itemGroup.isActive ;
+    //this.isActivate = itemGroup.isActive ;
 
     this.itemsGroup[index].isActive = itemGroup.isActive;
 

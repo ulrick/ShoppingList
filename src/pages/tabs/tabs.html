@@ -1,8 +1,7 @@
 <ion-tabs>
-    <ion-tab [root]="homePage" tabTitle="Articles" tabIcon="ios-cart-outline" [tabBadge] = "boughtItems" tabBadgeStyle="secondary">
-    </ion-tab>
-    <!--ion-tab (ionSelect)="saveItemList()" tabTitle="Exporter" tabIcon="ios-share-outline"></ion-tab>-->
-    <ion-tab [root]="itemCategoryPage" tabTitle="Catégories" tabIcon="ios-people-outline"></ion-tab>
-    <ion-tab [root]="saveListPage" tabTitle="Mes listes" tabIcon="ios-paper-outline"></ion-tab>
-    <!--ion-tab (ionSelect) = "deleteList()" tabTitle="Deletion" tabIcon="ios-trash-outline"></ion-tab>-->
-  </ion-tabs>
+  <ion-tab [root]="homePage" tabTitle="Articles" tabIcon="ios-cart-outline" [tabBadge] = "boughtItems" tabBadgeStyle="ternary" color="secondary"></ion-tab>
+  <!--ion-tab (ionSelect)="saveItemList()" tabTitle="Exporter" tabIcon="ios-share-outline"></ion-tab>-->
+  <ion-tab [root]="itemCategoryPage" tabTitle="Catégories" tabIcon="ios-options-outline"></ion-tab>
+  <ion-tab [root]="saveListPage" tabTitle="Mes listes" tabIcon="ios-paper-outline"></ion-tab>
+  <ion-tab [root]="configPage" tabTitle="Réglages" tabIcon="ios-construct-outline"></ion-tab>
+</ion-tabs>

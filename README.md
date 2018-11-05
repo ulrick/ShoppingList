@@ -15,3 +15,7 @@ Create a complete shopping list.
 - Delete saved list
 - Update or modify an item
 - Update or modify an item group
+- Send SMS
+- Sort list (alphabetically, as you want by drag and drop)
+- update or modification of an item (Group and name)
+- Define Preferences & Parameter

@@ -16,12 +16,12 @@
 <ion-content>
     <ion-list *ngFor="let key of objectKeys ; let i = index">
         <ion-list-header color="light" text-center>
-            {{ key }} 
+            <ion-label class="list-header-divider" color="secondary">{{ key }} </ion-label>
         </ion-list-header>
-        <ion-item *ngFor="let item of itemsGroupByCategory[key] ; let j = index">
-            <ion-label> 
-              {{ item.itemName }}
-            </ion-label>
+        <ion-item *ngFor="let item of itemsGroupByCategory[key] ; let j = index" [class.line-through] = "item.isBought">  
+          <ion-label class="selectable-item">
+            {{ item.itemName }}
+          </ion-label>
         </ion-item>
       </ion-list>
 </ion-content>

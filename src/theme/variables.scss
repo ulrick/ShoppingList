@@ -39,10 +39,11 @@ $colors: (
 //  primary:    #488aff,
   secondary:  #D35137,
 //  secondary:  #32db64,
+  ternary:    #FBC13B,
   danger:     #f53d3d,
   light:      #f4f4f4,
   dark:       #222,
-  warning:    #FFC527,
+  warning:    #FBC13B,
   clear:      #FFFFFF,
   transparent: transparent
 );
@@ -92,3 +93,35 @@ $colors: (
 
 @import "roboto";
 @import "noto-sans";
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../assets/fonts/open-sans.regular.ttf');
+}
+
+@font-face {
+  font-family: 'Open Sans light';
+  font-style: normal;
+  font-weight: 200;
+  src: url('../assets/fonts/open-sans.light.ttf');
+}
+
+@font-face {
+  font-family: 'Open Sans italic';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../assets/fonts/open-sans.italic.ttf');
+}
+
+@font-face {
+  font-family: 'Open Sans light italic';
+  font-style: normal;
+  font-weight: 100;
+  src: url('../assets/fonts/open-sans.light-italic.ttf');
+}
+
+body {
+  font-family: "Open Sans light", "Roboto" !important;
+}

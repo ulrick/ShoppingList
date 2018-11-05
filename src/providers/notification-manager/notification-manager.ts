@@ -17,20 +17,19 @@ export class NotificationManagerProvider {
   }
 
 
+  
   /**
    * Show notification message
-   * 
-   * @private
-   * @param {string} message 
-   * @param {{duration?: number, position?: string, cssClass?: string, showCloseButton?: boolean}} [option] 
-   * @memberof HomePage
+   *
+   * @param {string} message
+   * @param {{duration?: number, position?: string, cssClass?: string, showCloseButton?: boolean}} [option=null]
+   * @memberof NotificationManagerProvider
    */
   public showNotification(message : string, option: {duration?: number, position?: string, cssClass?: string, showCloseButton?: boolean} = null): void {
 
-
     var options = {
       message: message,
-      duration: (option && option.duration) ? option.duration : 2000,
+      duration: (option && option.duration) ? option.duration : 2500,
       position: (option && option.position) ? option.position : 'middle',
       cssClass : (option && option.cssClass) ? option.cssClass : 'toast-class',
       showCloseButton : (option && option.showCloseButton) ? option.showCloseButton : false
@@ -42,10 +41,6 @@ export class NotificationManagerProvider {
     });
   
     toast.present();
-    /*return new Promise(resolve => {
-      resolve(toast);
-    })*/
-
   }
 
 }

@@ -25,7 +25,7 @@
   <ion-list reorder="true" (ionItemReorder)="reorderItems($event)">
       <ion-item-sliding *ngFor="let item of itemsGroup ; let ind = index">
         <ion-item padding-right class="item-group-label">
-          <ion-label (click)="update(item, ind)">{{item.itemGroupLabel}}</ion-label>
+          <ion-label class="selectable-item item-group" (click)="update(item, ind)">{{item.itemGroupLabel}}</ion-label>
           <ion-toggle item-start [(ngModel)]="item.isActive" [disabled] = "item.isDisabled" checked = "item.isActive" (ionChange)="onToggle(item, ind)"></ion-toggle>  
         </ion-item>
         <ion-item-options side="right">
