@@ -24,6 +24,7 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="backgroundColor" value="0xFFFFFFFF" />
     <preference name="SplashScreenSpinnerColor" value="white" />
+    <preference name="loadUrlTimeoutValue" value="700000" />
     <platform name="android">
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />

@@ -41,6 +41,20 @@ export interface ShoppingItemSaveType {
 export interface Parameter {
     id: number;
     name: string;
-    isActive: boolean;
-    isDisabled: boolean;
+    value?: any;
+    isActive?: boolean;
+    isDisabled?: boolean;
+}
+
+
+/**
+ * Language type
+ *
+ * @export
+ * @interface LanguageType
+ */
+export interface LanguageType {
+    code: string;
+    name: string;
+    isChecked?: boolean;
 }

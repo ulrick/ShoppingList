@@ -1,7 +1,7 @@
 //import {Utils} from '../model/utils';
 //import { FirebaseProvider } from './../../providers/firebase/firebase';
 import { Component, ViewChild  } from '@angular/core';
-import { NavController, IonicPage, AlertController, FabContainer, Events, ItemSliding, List, PopoverController } from 'ionic-angular';
+import { NavController, IonicPage, AlertController, FabContainer, Events, ItemSliding, List, PopoverController, Content } from 'ionic-angular';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ShoppingItem, ItemGroup, Parameter } from '../model/sample-interface';
@@ -10,8 +10,11 @@ import { NotificationManagerProvider } from '../../providers/notification-manage
 import { PopoverPage } from '../popover/popover';
 import { ItemEditorPage } from '../item-editor/item-editor';
 import { SMS } from '@ionic-native/sms';
-//import { SaveListPage } from '../save-list/save-list';
-//import { Observable } from '../../../node_modules/rxjs/Observable';
+import { LanguageManagerProvider } from '../../providers/language-manager/language-manager';
+import { TranslateService } from '@ngx-translate/core';
+import { ItemGroupPage } from '../item-group/item-group';
+
+
 
 
 @IonicPage({
@@ -21,7 +24,7 @@ import { SMS } from '@ionic-native/sms';
 @Component({
   selector: 'home',
   templateUrl: 'home.html',
-  providers: [ShoppingServiceProvider, NotificationManagerProvider, ItemSliding]
+  providers: [ShoppingServiceProvider, NotificationManagerProvider, ItemSliding, LanguageManagerProvider]
 })
 export class HomePage {
 
@@ -33,9 +36,10 @@ export class HomePage {
   private itemGroups: ItemGroup[] = [];
   public boughtItems: number = 0 ;
   public parameters: Parameter[] = [];
-  private SelectedItem: ShoppingItem;
+  private selectedItem: ShoppingItem;
   
   @ViewChild('myList', {read: List}) list: List;
+  @ViewChild(Content) content: Content;
  
   constructor(public events: Events,
               public slidingItem: ItemSliding,
@@ -44,37 +48,41 @@ export class HomePage {
               public notificationService: NotificationManagerProvider,  
               public formBuilder : FormBuilder, 
               public alertCtrl: AlertController, 
-              public popoverCtrl: PopoverController, public sms: SMS) {
+              public popoverCtrl: PopoverController,
+              public sms: SMS, 
+              public translationService: LanguageManagerProvider) {
+
+    //this.translationService.setDefaultLang('en');
 
     this.itemForm = formBuilder.group({
       "itemName" : ["", Validators.required]
     });
-    
-    // this.getShoppingItems().then((data)=>{
-    //   this.updateWithExistingItemsGroup();
-    // });
 
+     
+  }
+
+  protected ionViewDidEnter() {
+    //console.log("I was entered");
   }
 
   protected ionViewWillEnter() {
 
-    this.shoppingService.readConfig().then((data: Parameter[])=>{
+    this.shoppingService.readConfig()
+    .then((data: Parameter[])=>{
       this.parameters = data;
+    })
+    .then( ()=>{
+      this.shoppingService.readShoppingItemsGroup().then((groupList: ItemGroup[])=>{ 
+        this.itemGroups = groupList;
+      });
     })
     .then(()=>{
       this.getShoppingItems().then((data)=>{
         this.updateWithExistingItemsGroup();
         this.updateCart();
       });
-    })
-    
-    
-  }
-
-  protected ionViewDidEnter() {
-    // this.getShoppingItems().then((data)=>{
-    //   this.updateWithExistingItemsGroup();
-    // });
+    });
+    //console.log("I am entered");
   }
 
   /**
@@ -84,23 +92,20 @@ export class HomePage {
    * @memberof HomePage
    */
   private updateWithExistingItemsGroup() : void {
-    this.shoppingService.readShoppingItemsGroup().then((groupList)=>{
+    //this.shoppingService.readShoppingItemsGroup().then((groupList)=>{
       
-      var nonExistingItemGroups : string[] = _.differenceBy(this.shoppingItems.map((val: ShoppingItem) => {return val.itemGroup}), groupList.map(val=>{return val.itemGroupLabel}));
+      var nonExistingItemGroups : string[] = _.differenceBy(this.shoppingItems.map((val: ShoppingItem) => {return val.itemGroup}), this.itemGroups.map(val=>{return val.itemGroupLabel}));
                                        
-      this.existingItemsGroup = _.intersectionWith(groupList.map(val=>{return val.itemGroupLabel}), this.shoppingItems.map((val: ShoppingItem) => {return val.itemGroup}), _.isEqual);
+      this.existingItemsGroup = _.intersectionWith(this.itemGroups.map(val=>{return val.itemGroupLabel}), this.shoppingItems.map((val: ShoppingItem) => {return val.itemGroup}), _.isEqual);
       
       if(nonExistingItemGroups != null && nonExistingItemGroups.length > 0){
         nonExistingItemGroups.forEach(element => {
           this.shoppingItems.forEach(val => {
-            if(val.itemGroup == element) val.itemGroup = "Tous";
+            if(val.itemGroup == element) val.itemGroup = "sltk.category.defaultCategory";
             return val;
           });
         });
       }
-      
-      this.itemGroups = groupList;
-    })
   }
 
   /**
@@ -136,48 +141,72 @@ export class HomePage {
 
         if((categoryParam != null || categoryParam != undefined) && categoryParam.isActive){
 
+
+          if(this.itemGroups.every(val=>{
+            return !val.isActive;
+          })){
+            this.notificationService.showNotification(this.translationService.instant("sltk.notification.warningNoActiveCategory"), {duration: 5000});
+            return ;
+          }
+
           let alert = this.alertCtrl.create();
-          alert.setTitle("Catégorie d'article");
-          alert.setCssClass('custom-alert');
+          alert.setTitle(this.translationService.instant("sltk.home.addCategoryTitle"));
+          alert.setCssClass('custom-alert');     
           
-          this.shoppingService.readShoppingItemsGroup().then((groupList) => {
-          
-            groupList.forEach((value, index) => {
-              if(value.isActive){
-                alert.addInput({
-                  type: 'radio',
-                  id : index.toString(),
-                  label: value.itemGroupLabel,
-                  value: value.itemGroupLabel,//Utils.removeAccents(value+'_'+index.toString()).toLowerCase(),
-                  checked: value.itemGroupLabel == "Tous" ? true : false
-                });
-              }
-            });
-          
-            alert.addButton({
-              text: 'Nouveau',
-              handler: data => {
-                //this.navCtrl.push(ItemGroupPage);
-                this.navCtrl.parent.select(1);
-              }
-            });
-
-            alert.addButton('Annuler');
-
-            alert.addButton({
-              text: 'OK',
-              handler: data => {
-                this.saveItem(data);
-              }
-            });
-
-            alert.present();
+          this.itemGroups.forEach((value, index) => {
+            if(value.isActive){
+              alert.addInput({
+                type: 'radio',
+                id : index.toString(),
+                label: this.translationService.instant(value.itemGroupLabel),
+                value: value.itemGroupLabel,
+                checked: value.itemGroupLabel == this.getActiveItemsGroup()[0].itemGroupLabel ? true : false
+              });
+            }
           });
+        
+          alert.addButton({
+            text: this.translationService.instant("sltk.button.new"),
+            handler: data => {
+              this.navCtrl.parent.select(2);
+            }
+          });
+
+          alert.addButton(this.translationService.instant("sltk.button.cancel"));
+
+          alert.addButton({
+            text: this.translationService.instant("sltk.button.ok"),
+            handler: data => {
+              this.saveItem(data);
+            }
+          });
+
+          alert.present();
         }
         else{
           this.saveItem();
-        }   
+        }  
     }
+  }
+
+  private getActiveItemsGroup(): ItemGroup[]{
+    return this.itemGroups.filter((items=>{
+      return items.isActive == true;
+    }))
+  }
+
+  /**
+   * Finds item group object from name
+   *
+   * @private
+   * @param {string} name item group label
+   * @returns {ItemGroup}
+   * @memberof HomePage
+   */
+  private findItemGroupByName(name: string): ItemGroup{
+    return this.itemGroups.find(val=>{
+      return val.itemGroupLabel == name;
+    })
   }
 
   /**
@@ -187,9 +216,9 @@ export class HomePage {
    * @param {*} group
    * @memberof HomePage
    */
-  private saveItem(group?: any){
+  private saveItem(group?: string){
 
-    var data = group ? group : "Tous";
+    var data = group ? group : "sltk.category.defaultCategory";
 
     var itemList  = this.shoppingItems.map((val : ShoppingItem) => {
       if (val && val.itemName != "" )
@@ -209,11 +238,11 @@ export class HomePage {
    * 
    * 
    * @private
-   * @param {*} data Item group
-   * @returns {Promise<void>} 
+   * @param {string} data Item group
+   * @returns {void} 
    * @memberof HomePage
    */
-  private createNewItem(data : any) : Promise<void> {
+  private createNewItem(data : string) : void {
 
     var shoppingItem : ShoppingItem = {itemId:null, itemName : "", itemGroup: "", isBought : false};
     var isAtTopOfList: boolean = true;
@@ -224,24 +253,36 @@ export class HomePage {
       isAtTopOfList = false;
     }
     // Save into database
-    return this.getShoppingItems().then( itemList => {
+    this.getShoppingItems().then( itemList => {
 
-      shoppingItem.itemId = null; // _.max(_.map(itemList, (val, index)=>{return index}));
-      shoppingItem.itemName = this.newItem; 
+      shoppingItem.itemId = Math.max(...itemList.map(val=>{return val.itemId;})) + 1;
+      shoppingItem.itemName = this.newItem;
       shoppingItem.itemGroup = data;
       shoppingItem.isBought = false;
 
+      // Insert at the top or the bottom of the list
       isAtTopOfList ? itemList.unshift(shoppingItem): itemList.push(shoppingItem);
 
-      this.shoppingService.createShoppingItems(itemList).then(addedItems => {
+      return this.shoppingService.createShoppingItems(itemList).then(addedItems => {
 
-        if(this.existingItemsGroup.indexOf(data) == -1)
+        if(this.existingItemsGroup.indexOf(data) == -1){
           this.existingItemsGroup.push(data);
-          
+        }
+             
         this.shoppingItems = addedItems;
+        this.selectedItem = shoppingItem;
+        
+        // var itemGroup : ItemGroup = this.findItemGroupByName(data);
+        // var element =  document.getElementById(itemGroup.itemGroupId.toString());
+        // let yOffset = element.offsetTop;
+        // this.content.scrollTo(0, yOffset, 1000);
+        //console.log("nouvel element : ",this.selectedItem);
+
         this.newItem = "";
+
+        return shoppingItem;
       });
-    }).then(val=>{
+    }).then((shoppingItem: ShoppingItem)=>{
       this.updateWithExistingItemsGroup();
     });
   }
@@ -257,20 +298,20 @@ export class HomePage {
    */
   private confirmItemDuplication(data : any) {
     let confirm = this.alertCtrl.create({
-      title: 'Confirmer',
-      message: "Cet article existe déjà! Souhaitez-vous l'ajouter? ",
+      title: this.translationService.instant("sltk.home.confirmDuplicationTitle"),
+      message: this.translationService.instant("sltk.home.confirmDuplicationMessage"),
       buttons: [
         {
-          text: 'Non',
+          text: this.translationService.instant("sltk.button.no"),
           handler: () => {    
           }
         },
         {
-          text: 'Oui',
+          text: this.translationService.instant("sltk.button.yes"),
           handler: () => {
             this.createNewItem(data);
-            var options = { duration : 2000, position : 'top', cssClass : 'warning-message', showCloseButton: false };
-            this.notificationService.showNotification('Ajouté avec succès!', options);
+            //var options = { duration : 2000, position : 'top', cssClass : 'warning-message', showCloseButton: false };
+            this.notificationService.showNotification(this.translationService.instant("sltk.notification.successAdd"));
           }
         }
       ]
@@ -312,7 +353,8 @@ export class HomePage {
     slidingItem.moveSliding(0);
     slidingItem.moveSliding(-150);
 
-    // console.log("open amount ", slidingItem.getOpenAmount(), " Pourcent ", slidingItem.getSlidingPercent() );
+    //slidingItem.setElementClass("slide-class", false);
+    this.selectedItem = item;
     
   }
 
@@ -329,8 +371,6 @@ export class HomePage {
     
     this.navCtrl.push(ItemEditorPage, {"index": index, "itemToReplace": itemToReplace, "shoppingItems": this.shoppingItems }, {animate: true, direction: 'forward'});
     if(slidingItem) slidingItem.close();
-
-    //this.SelectedItem = itemToReplace;
   }
 
   /**
@@ -377,37 +417,37 @@ export class HomePage {
     //fab.close();
     if(this.shoppingItems != null && this.shoppingItems.length > 0){
         let alert = this.alertCtrl.create({
-          title: 'Enregistrer la liste',
+          title: this.translationService.instant("sltk.home.saveListTitle"),
           inputs: [
             {
               name: 'listName',
-              placeholder: 'Nom de la liste'
+              placeholder: this.translationService.instant("sltk.home.saveListPlaceholder")
             }
           ],
           buttons: [
             {
-              text: 'Annuler',
+              text: this.translationService.instant("sltk.button.cancel"),
               role: 'cancel',
               handler: data => {
-                console.log('Cancel clicked');
+                //console.log('Cancel clicked');
               }
             },
             {
-              text: 'Ok',
+              text: this.translationService.instant("sltk.button.ok"), 
               handler: data => {
-                console.log(data);
+                //console.log(data);
                 if (data.listName != "") {
                   
                   this.getShoppingItems().then(items =>{
                   
                       this.shoppingService.createDuplicatedCurrentItems(data.listName, items).then(()=>{
-                        this.notificationService.showNotification("Liste enregistrée avec succès !");
+                        this.notificationService.showNotification(this.translationService.instant("sltk.notification.successListSave"));
                       })
                     
                   })
                   
                 } else {
-                  this.notificationService.showNotification("Veuillez rensigner un nom à votre liste !");
+                  this.notificationService.showNotification(this.translationService.instant("sltk.notification.warningListNameEmpty"));
                   return false;
                 }
               }
@@ -434,22 +474,22 @@ export class HomePage {
     }
 
     let confirm = this.alertCtrl.create({
-      title: 'Confirmer',
-      message: "Etes vous sûrs de vouloir supprimer la liste en cours? ",
+      title: this.translationService.instant("sltk.home.confirmCurrentListDeletionTitle"),
+      message: this.translationService.instant("sltk.home.confirmCurrentListDeletionMessage"),
       buttons: [
         {
-          text: 'Non',
+          text: this.translationService.instant("sltk.button.no"),
           handler: () => {
           }
         },
         {
-          text: 'Oui',
+          text: this.translationService.instant("sltk.button.yes"),
           handler: () => {
             this.shoppingService.removeShoppingItems().then(()=>{
               this.getShoppingItems().then((data)=>{
                 this.updateWithExistingItemsGroup();
               });
-              this.notificationService.showNotification('Suppression effectuée avec succès!');
+              this.notificationService.showNotification(this.translationService.instant("sltk.notification.successDeletion"));
             });            
           }
         }
@@ -468,7 +508,7 @@ export class HomePage {
    * @memberof HomePage
    */
   public reorderItems(indexes) {
-    console.log("move place ", indexes);
+    //console.log("move place ", indexes);
     let element = this.shoppingItems[indexes.from];
     this.shoppingItems.splice(indexes.from, 1);
     this.shoppingItems.splice(indexes.to, 0, element);
@@ -506,9 +546,20 @@ export class HomePage {
     });
   }
 
+  /**
+   * Sends SMS
+   *
+   * @returns {void}
+   * @memberof HomePage
+   */
   public sendSms(): void{
 
-    var itemsToSend : string = "Liste de course: \n \n";
+    if(this.shoppingItems.length == 0){
+      this.notificationService.showNotification(this.translationService.instant("sltk.home.listIsEmpty"));
+      return;
+    }
+
+    var itemsToSend : string = this.translationService.instant("sltk.home.smsContentTitle") + " \n \n";
     
     itemsToSend = itemsToSend.concat(
       this.shoppingItems.map((val)=>{
@@ -523,6 +574,42 @@ export class HomePage {
     }
 
     this.sms.send('', itemsToSend, options);
+  }
+
+  /**
+   * Search for an article
+   * @param searchVal 
+   */
+  public filterItems(searchVal?:string): void{
+
+    var searchValue = searchVal ? searchVal : this.newItem;
+    
+    if(searchVal){
+      // if(searchValue != "" && searchValue.length > 2){
+      //   this.shoppingItems = this.shoppingItems.filter((val)=>{
+      //     return val.itemName.indexOf(searchValue) != -1;
+      //   });
+      // }
+      // else{
+      //   this.getShoppingItems();
+      // }
+      if(searchValue != "" && searchValue.length < 3){
+        this.getShoppingItems();
+      }
+    }
+    else{
+      if(searchValue != ""){
+        this.shoppingItems = this.shoppingItems.filter((val)=>{
+          return val.itemName == searchValue || val.itemName.includes(searchValue);
+        });
+      }
+      else{
+         this.getShoppingItems();
+      }
+    }
+    
+    
+    console.log(searchValue);
   }
 
 }

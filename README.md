@@ -3,6 +3,7 @@ Create a complete shopping list.
 
 ## Features
 #### Shopping list
+##### v1.0.0 light
 - Create an shopping item by category
 - Show the list of shopping item grouped by category
 - Deletion of an shopping item
@@ -19,3 +20,8 @@ Create a complete shopping list.
 - Sort list (alphabetically, as you want by drag and drop)
 - update or modification of an item (Group and name)
 - Define Preferences & Parameter
+
+##### v1.0.1 
+- Add internationalization i18n French, english, Deutcsh, Spanish
+- Highlight new inserted item and category
+- Modify a saved list name (favorite)

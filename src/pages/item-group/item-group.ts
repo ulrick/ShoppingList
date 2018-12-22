@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, AlertController, FabContainer } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { IonicPage, NavController, AlertController, FabContainer, Content } from 'ionic-angular';
 import { ItemGroup, ShoppingItem } from '../model/sample-interface';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 //import _ from "lodash";
 import { Utils } from '../model/utils';
+import { LanguageManagerProvider } from '../../providers/language-manager/language-manager';
+import { NotificationManagerProvider } from '../../providers/notification-manager/notification-manager';
 
 /**
  * Generated class for the ItemGroupPage page.
@@ -21,17 +23,34 @@ import { Utils } from '../model/utils';
 export class ItemGroupPage {
 
   private itemsGroup : ItemGroup[] = [];
-  //private itemGroup : ItemGroup;
-  //private isActivate : boolean = true;
+  private selectedItem: ItemGroup;
 
+  private placeholderProposer: string[] = [
+    "sltk.category.addPlaceholder.house",
+    "sltk.category.addPlaceholder.cleaningProduct" , 
+    "sltk.category.addPlaceholder.yogurt" , 
+    "sltk.category.addPlaceholder.cheese" , 
+    "sltk.category.addPlaceholder.frozenProduct", 
+    "sltk.category.addPlaceholder.beverageAlcohol" , 
+    "sltk.category.addPlaceholder.seasoning" , 
+    "sltk.category.addPlaceholder.meats" , 
+    "sltk.category.addPlaceholder.fruitsVegetables" ,
+    "sltk.category.addPlaceholder.hygieneCare"
+  ]
 
-  constructor(public navCtrl: NavController, public shoppingService: ShoppingServiceProvider, public alertCtrl: AlertController) {
-
+  @ViewChild(Content) content: Content;
+  
+  constructor(public navCtrl: NavController, 
+              public shoppingService: ShoppingServiceProvider, 
+              public alertCtrl: AlertController, 
+              public translationService: LanguageManagerProvider,
+              public notificationService: NotificationManagerProvider) {
+    
   }
 
   private resetItemGroup(): void{
     this.shoppingService.readShoppingItemsGroup().then(groupList => { 
-      this.itemsGroup = [{itemGroupId : 0, itemGroupLabel : "Tous", itemGroupValue : "any" , isActive : true, isDisabled: true}];
+      this.itemsGroup = [{itemGroupId : 0, itemGroupLabel : "sltk.category.defaultCategory", itemGroupValue : "any" , isActive : true, isDisabled: true}];
       this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
     })
   }
@@ -44,9 +63,20 @@ export class ItemGroupPage {
     });
   }
 
-  ionViewDidLoad() {
+  protected ionViewWillEnter() {
+    this.getItemsGroup().then(itemsGroup=>{
+      this.shoppingService.readShoppingItems().then(items=>{
+        if(items.some(val=>{
+          return val.itemGroup == "sltk.category.defaultCategory";
+        })){
+          // itemsGroup[0].isDisabled = true;
+        }
+      });
+    });
+  }
 
-    this.getItemsGroup();
+  ionViewDidLoad() {
+    
   }
 
   /**
@@ -58,42 +88,45 @@ export class ItemGroupPage {
   public addItemGroup(fab: FabContainer): void{
 
     let prompt = this.alertCtrl.create({
-      title: 'Ajouter une catégorie',
+      title: this.translationService.instant('sltk.category.addTitle'),
       inputs: [
         {
           type: 'text',
           name: 'value',
-          placeholder: 'Title'
+          placeholder: this.generatePlaceHolder()
         }
       ],
       buttons: [
         {
-          text: 'Annuler',
+          text: this.translationService.instant('sltk.button.cancel'),
           handler: data => {
-            console.log('Cancel clicked');
+            //console.log('Cancel clicked');
           }
         },
         {
-          text: 'Ok',
+          text: this.translationService.instant('sltk.button.ok'),
           handler: data => {
           
+            if(data.value == "" || data.value == undefined) return;
+
             var newItemGroup : ItemGroup = {itemGroupId : null, itemGroupLabel : "", itemGroupValue : "" , isActive : true, isDisabled: false};
-           
-            this.getItemsGroup().then( list => {
              
-              newItemGroup.itemGroupId = null; //parseInt(_.max(Object.keys(list))) + 1;
-              newItemGroup.itemGroupLabel = data.value;
-              newItemGroup.itemGroupValue = Utils.removeAccents(data.value+'_'+newItemGroup.itemGroupId).toLowerCase();
+            newItemGroup.itemGroupId = Math.max(...this.itemsGroup.map(val=>{return val.itemGroupId;})) + 1;
+            newItemGroup.itemGroupLabel = data.value;
+            newItemGroup.itemGroupValue = Utils.removeAccents(data.value+'_'+newItemGroup.itemGroupId).toLowerCase();
 
-              // Add new item group if it doesn't exist
-              if(list.find(val=>{ return val.itemGroupValue == newItemGroup.itemGroupValue }) == null){
-                list.push(newItemGroup);
-              }   
-
-              this.shoppingService.createShoppingItemsGroup(list).then(val =>{
-                this.itemsGroup = val;
-              });
-            });
+            // Add new item group if it doesn't exist
+            if(this.itemsGroup.find(val=>{ return val.itemGroupLabel == data.value }) == null){
+              this.itemsGroup.push(newItemGroup);
+              this.selectedItem = newItemGroup;
+  
+              //this.content.scrollToBottom(500);
+              this.content.scrollTo(0, this.content.scrollHeight, 1000);
+              this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
+            }
+            else{
+              this.notificationService.showNotification(this.translationService.instant("sltk.notification.warningDuplicateCategory"));
+            }
           }
         }
       ]
@@ -103,6 +136,7 @@ export class ItemGroupPage {
     fab.close();
 
   }
+  
 
   /**
    * Activate or deactivate an item group activation
@@ -130,17 +164,17 @@ export class ItemGroupPage {
     fab.close();
     
     let confirm = this.alertCtrl.create({
-      title: 'Remise à zéro',
-      message: 'Etes vous sûrs de vouloir supprimer la liste des catégories ?',
+      title: this.translationService.instant("sltk.category.deleteAllTitle"),
+      message: this.translationService.instant("sltk.category.deleteAllMessage"),
       buttons: [
         {
-          text: 'Non',
+          text: this.translationService.instant("sltk.button.no"),
           handler: () => {
-            console.log('Disagree clicked');
+            //console.log('Disagree clicked');
           }
         },
         {
-          text: 'Oui',
+          text: this.translationService.instant("sltk.button.yes"),
           handler: () => {
             this.resetItemGroup();
           }
@@ -158,26 +192,31 @@ export class ItemGroupPage {
    * @memberof ItemGroupPage
    */
   public delete(item : ItemGroup, index: number){
+    
+    if(item.itemGroupLabel == "sltk.category.defaultCategory"){
+      this.notificationService.showNotification(this.translationService.instant("sltk.notification.warningDeleteDefaultCategory"));
+      return;
+    };
+
     let confirm = this.alertCtrl.create({
-      title: 'Suppression',
-      message: 'Etes vous sûrs de vouloir supprimer cette catégorie? Vos articles seront classés dans la catégories "Tous"!',
+      title: this.translationService.instant("sltk.category.deleteTitle"),
+      message: this.translationService.instant("sltk.category.deleteMessage"),
       buttons: [
         {
-          text: 'Non',
+          text: this.translationService.instant("sltk.button.no"),
           handler: () => {
-            console.log('Disagree clicked');
+            //console.log('Disagree clicked');
           }
         },
         {
-          text: 'Oui',
+          text: this.translationService.instant("sltk.button.yes"),
           handler: () => {
-            if(item.itemGroupLabel != "Tous"){
+            if(item.itemGroupLabel != "sltk.category.defaultCategory"){
               this.itemsGroup.splice(index, 1);
-
               this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
             }
             else{
-
+              
             }
           }
         }
@@ -210,40 +249,56 @@ export class ItemGroupPage {
    */
   public update(itemGroupToReplace: ItemGroup, index: number): void{
   
+    if(itemGroupToReplace.itemGroupLabel == "sltk.category.defaultCategory") return;
+
+    this.selectedItem = itemGroupToReplace;
     var oldName: string = this.itemsGroup[index].itemGroupLabel;
-    let alert = this.alertCtrl.create();
-    alert.setTitle("Modifier");
+    let alert = this.alertCtrl.create(); 
+    alert.setCssClass('custom-alert');
+    alert.setTitle(this.translationService.instant("sltk.category.updateTitle") );
     
-      alert.addInput({
-        type: 'text',
-        name: 'item',
-        value: itemGroupToReplace.itemGroupLabel,
-        placeholder: "Nom de la catégorie"
-      });
+    alert.addInput({
+      type: 'text',
+      name: 'item',
+      value: itemGroupToReplace.itemGroupLabel,
+      placeholder: this.generatePlaceHolder()
+    });
 
-      alert.addButton("Annuler");
-      alert.addButton({
-        text: 'Ok',
-        handler: data => {     
-          if(this.itemsGroup[index] != undefined && itemGroupToReplace.itemGroupLabel != data.item){
-            this.itemsGroup[index].itemGroupLabel = data.item;
-            this.shoppingService.createShoppingItemsGroup(this.itemsGroup).then((itemsGroup: ItemGroup[])=>{
+    alert.addButton(this.translationService.instant("sltk.button.cancel"));
+    alert.addButton({
+      text: this.translationService.instant("sltk.button.ok"),
+      handler: data => {     
+        if(this.itemsGroup[index] != undefined && itemGroupToReplace.itemGroupLabel != data.item){
+          this.itemsGroup[index].itemGroupLabel = data.item;
+          this.shoppingService.createShoppingItemsGroup(this.itemsGroup).then((itemsGroup: ItemGroup[])=>{
 
-              this.shoppingService.readShoppingItems().then(items=>{
-                items.forEach((val: ShoppingItem, index:number)=>{
-                  if(val.itemGroup == oldName){
-                    val.itemGroup = data.item;
-                  }
-                });
-                this.shoppingService.createShoppingItems(items);
-              })
-            });
-          }
+            this.shoppingService.readShoppingItems().then(items=>{
+              items.forEach((val: ShoppingItem, index:number)=>{
+                if(val.itemGroup == oldName){
+                  val.itemGroup = data.item;
+                }
+              });
+              this.shoppingService.createShoppingItems(items);
+            })
+          });
         }
-      });
+      }
+    });
 
-      alert.present();
+    alert.present();
   }
+
+
+  public generatePlaceHolder(): string {
+    return this.translationService.instant(this.placeholderProposer[this.getRandomInt(this.placeholderProposer.length)]);
+  }
+
+  private getRandomInt(max): number {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
+
+  
+
 
 }
 

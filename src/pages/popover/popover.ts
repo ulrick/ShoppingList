@@ -25,7 +25,7 @@ export class PopoverPage{
   ngOnInit() {
     if (this.navParams.data) {
       this.homePage = this.navParams.data.homePage;
-      console.log(this.homePage);
+      //console.log(this.homePage);
     }
   }
 

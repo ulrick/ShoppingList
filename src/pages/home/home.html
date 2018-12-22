@@ -1,8 +1,14 @@
 <ion-header>
   <ion-navbar color="primary">
     
+    <ion-buttons left>
+      <button ion-button menuToggle class="toggle-menu">
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    </ion-buttons>
+
     <ion-title text-center>
-      Ma liste de courses
+      {{ 'sltk.home.myShoppingList' | translate}}
     </ion-title>
     
     <ion-buttons end>
@@ -14,13 +20,18 @@
   </ion-navbar>
 
   <ion-toolbar class ="sub-toolbar">
-    <form [formGroup]="itemForm" (ngSubmit)="addItem()">
+    <form [formGroup]="itemForm">
         <ion-item class="subheader-input">
           <ion-input type="text" class="form-control" formControlName="itemName" [(ngModel)]="newItem" name="shoppingItem" 
-                      placeholder="Insérer un nouvel article ici" 
-                      autocomplete="on">
+                      placeholder= "{{ 'sltk.home.placeholder.insertNewItem' | translate }}"
+                      autocomplete="off" (input)="filterItems($event.target.value)">
           </ion-input>
-          <button ion-button color="secondary" [class.hide-btn] = "!itemForm.valid" [disabled]="!itemForm.valid" clear item-end><ion-icon name="ios-add-outline"></ion-icon>
+  
+          <button ion-button color="secondary" [class.hide-btn] = "!itemForm.valid" [disabled]="!itemForm.valid" clear item-end (click)="addItem()">
+            <ion-icon name="ios-add-outline"></ion-icon>
+          </button>
+          <button ion-button color="secondary" [class.hide-btn] = "!itemForm.valid" [disabled]="!itemForm.valid" clear item-start (click)="filterItems()">
+            <ion-icon class="search-item" name="ios-search-outline"></ion-icon>
           </button>
         </ion-item>
     </form>
@@ -32,14 +43,14 @@
   <ion-list #myList *ngFor="let itemGroup of existingItemsGroup ; let ind = index">
 
         <ion-list-header color="light" text-center>
-            <ion-label class="list-header-divider">{{ itemGroup }}</ion-label>
+            <ion-label class="list-header-divider">{{ itemGroup | translate}}</ion-label>
         </ion-list-header>
 
         <ion-item-group reorder="true" (ionItemReorder)="reorderItems($event)">
 
-          <ion-item-sliding #slidingItem *ngFor="let item of shoppingItems ; let i = index">
+          <ion-item-sliding #slidingItem *ngFor="let item of shoppingItems ; let i = index" [id]="item.itemId">
           
-            <ion-item *ngIf = "item.itemGroup == itemGroup" [class.line-through] = "item.isBought">
+            <ion-item *ngIf = "item.itemGroup == itemGroup" [class.line-through] = "item.isBought" [class.selected]="item == selectedItem">
               <ion-label class="selectable-item" (click)="openSlide(item, slidingItem)">{{ item.itemName }}</ion-label>
             </ion-item>
             

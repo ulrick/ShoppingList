@@ -1,0 +1,123 @@
+{
+    "sltk": {
+        "home": {
+            "myShoppingList": "Meine Einkaufsliste",
+            "placeholder.insertNewItem": "Geben Sie hier einen neuen Artikel ein",
+            "update": {
+                "title": "Veränderung",
+                "itemName": "Artikelname",
+                "category": "Kategorie"
+            },
+            "addCategoryTitle": "Artikelkategorie",
+            "confirmDuplicationTitle": "Bestätigen",
+            "confirmDuplicationMessage": "Dieser Artikel ist bereits vorhanden! Möchten Sie ihn hinzufügen?",
+            "saveListTitle": "Liste speichern",
+            "saveListPlaceholder": "Listenname",
+            "confirmCurrentListDeletionTitle": "Bestätigen",
+            "confirmCurrentListDeletionMessage": "Möchten Sie diese aktuellen Elemente wirklich löschen?",
+            "smsContentTitle": "Einkaufsliste",
+            "listIsEmpty": "Die Artikelliste ist leer!"
+        },
+        "category": {
+            "headerTitle": "Artikelkategorien",
+            "addTitle": "Kategorie hinzufügen",
+            "addPlaceholder": {
+                "house": "Haus",
+                "cleaningProduct": "Reinigungsprodukt",
+                "yogurt": "Joghurt",
+                "cheese": "Käse",
+                "frozenProduct": "Gefrorenes Produkt",
+                "beverageAlcohol": "Getränke & Alkohol",
+                "seasoning": "Würzen",
+                "meats": "Fleisch",
+                "fruitsVegetables": "Obst & Gemüse",
+                "hygieneCare": "Hygiene & Pflege"
+            },
+            "deleteTitle": "Entfernen",
+            "deleteAllTitle": "Alle entfernen",
+            "deleteMessage": "Möchten Sie diese Kategorie wirklich löschen? Der entsprechende Artikel wird in die Kategorie 'Alle Artikel' verschoben!",
+            "deleteAllMessage": "Möchten Sie wirklich alle Kategorienlisten löschen?",
+            "updateTitle": "Veränderung",
+            "defaultCategory": "Alle Artikel"
+        },
+        "favorite": {
+            "headerTitle": "Meine Favoriten",
+            "emptyFavoriteMessage": "Hier gibt es keine Einkaufsliste!",
+            "deleteTitle": "Entfernen",
+            "deleteMessage": "Möchten Sie diesen Favoriten wirklich löschen?",
+            "alertUseListTitle": "Importieren und Verwenden",
+            "alertUseListMessage": "Möchten Sie die aktuell verwendete Einkaufsliste speichern?",
+            "favoriteListName": "Favoritenliste",
+            "actionSheetViewBtn": "Ansicht",
+            "actionSheetImportBtn": "Importieren und Verwenden",
+            "actionSheetDeleteBtn": "Entfernen",
+            "actionSheetUpdateBtn": "Liste umbenennen",
+            "updateTitle": "Veränderung",
+            "listNamePlaceholder": "Listenname"
+        },
+        "favoriteDetail": {
+            "headerTitle": "Listendetail"
+        },
+        "options": {
+            "headerTitle": "Optionen",
+            "languageTitle": "Languages",
+            "preferenceTitle": "Einstellungen & Voreinstellungen",
+            "preferences": {
+                "classifyArticleByCategory": "Artikel in Kategorien klassifizieren",
+                "insertArticleAtTopOfList": "Neuen Artikel oben in der Liste einfügen"
+            }
+        },
+        "tabs": {
+            "items": "Artikel",
+            "category": "Kategorien",
+            "myLists": "Favoriten",
+            "options": "Optionen"
+        },
+        "popoverMenu": {
+            "saveTheList": "Zu Favoriten hinzufügen",
+            "sortAlphabetically": "Alphabetisch sortieren",
+            "sendBySMS": "Per SMS senden",
+            "removeAll": "Alles löschen"
+        },
+        "button": {
+            "ok": "Ok",
+            "cancel": "Abbrechen",
+            "validate": "Bestätigen",
+            "yes": "Ja",
+            "no": "Nein",
+            "new": "Neu"
+        },
+        "menu": {
+            "title": "Menu",
+            "options": "Optionen",
+            "tips": "Hilfe & Tipps"
+        },
+        "language": {
+            "headerTitle": "Sprache",
+            "french": "Französisch",
+            "english": "Englisch",
+            "german": "Deutsch",
+            "spanish": "Spanisch"
+        },
+        "notification": {
+            "successAdd": "Mit Erfolg hinzufügen!",
+            "successListSave": "Liste mit Erfolg gespeichert!",
+            "warningListNameEmpty": "Bitte geben Sie Ihrer Liste einen Namen!",
+            "successDeletion": "Die Einkaufsliste wird mit Erfolg gelöscht!",
+            "successDeleteFavorite": "Der Favorit wird mit Erfolg gelöscht!",
+            "successImportList": "Favoritenliste mit Erfolg importiert!",
+            "warningDuplicateCategory": "Diese Kategorie existiert bereits!",
+            "warningCurrentShoppingListIsEmpty": "Es wurde keine Sicherung durchgeführt, da die aktuelle Einkaufsliste leer ist.",
+            "warningDeleteDefaultCategory" : "Kann diese Kategorie nicht löschen!",
+            "warningNoActiveCategory" : "Sie haben sich dafür entschieden, Artikel in Kategorien einzuordnen. Bitte aktivieren oder erstellen Sie mindestens eine Kategorie!"
+        },
+        "tips": {
+            "tip1Title" : "Überprüfen Sie die Artikel beim Einkaufen",
+            "tip1Content" : "Schieben Sie Ihren Finger auf einen Artikel von links nach rechts in die Leiste, prüfen Sie den Artikel oder legen Sie ihn in den Warenkorb",
+            "tip2Title" : "Aktionsschaltflächen anzeigen",
+            "tip2Content" : "Bewegen Sie Ihren Finger von rechts nach links über einen Artikel oder eine Kategorie, um die Aktionsschaltflächen einzublenden, die Sie bearbeiten, löschen, importieren oder eine bestimmte Aktion ausführen können.",
+            "tip3Title" : "Elemente zwischen Kategorien neu anordnen",
+            "tip3Content" : "Drücken Sie die Sortiertaste eines Artikels und verschieben Sie ihn, um den Artikel an der gewünschten Stelle in derselben Kategorie zu platzieren."
+        }
+    }
+}

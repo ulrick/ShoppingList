@@ -1,0 +1,48 @@
+page-tips {
+
+    .slide1-content{
+        background-color: #0faeb0;
+        
+    }
+
+    .slide2-content{
+        background-color: #D35137;
+    }
+
+    .slide3-content{
+        background-color: #FBC13B; 
+    }
+
+    .slides-tips ion-slide{
+        color: white; 
+        padding: 20px;
+    }
+
+    .content-slide{
+        height: 86%;
+        margin: auto;
+    }
+
+    .slides-tips h1{
+        margin: 6rem 0 5rem 0;
+    }
+
+    .line-through{
+        text-decoration: line-through wavy;
+    }
+
+    ion-item-sliding.active-slide .item{
+        transition-timing-function: ease-in !important;
+        //transition-duration: 2s !important;
+    }
+
+    .tips-content-list{
+        width:75%;
+        margin: auto;
+    }
+
+    .tips-content-list ion-item-sliding .item{
+        min-height: 3rem;
+        height: 3.5rem;
+    }
+}

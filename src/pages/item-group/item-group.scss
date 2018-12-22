@@ -1,10 +1,19 @@
 page-item-group {
     .item-group-label{
-        padding-right: 10% !important;
+        padding-right: 2% !important;
 
         .item-group{
             text-transform: capitalize;
         }
+    }
+
+    .category-sliding-item{
+        width: 96%;
+    }
+
+    .selected {
+        background: linear-gradient(to right, #56DCDF 0%, #0FAEB0 100%) !important;
+        color: white !important;
     }
 
 }

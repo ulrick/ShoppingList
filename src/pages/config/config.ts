@@ -19,22 +19,45 @@ import { ShoppingServiceProvider } from '../../providers/shopping-service/shoppi
 export class ConfigPage {
 
   private params: Parameter[] = [];
+  private preferencesParams: Parameter[] = [];
+  private preferencesKeys: number[] = [];
+
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public shoppingService: ShoppingServiceProvider) {
+    
+    this.preferencesKeys = this.getPreferencesConfigKeys();
+
+    this.shoppingService.readConfig().then(data =>{
+      this.params = data;
+    });
+
   }
 
-  ionViewDidLoad() {
-    this.shoppingService.readConfig().then((params: Parameter[])=>{
-      this.params = params;
+  public getPreferences(): Promise<Parameter[]>{
+
+    return this.shoppingService.readConfig().then(data =>{
+
+      return data.filter((val)=>{
+        return this.preferencesKeys.includes(val.id);
+      });
     })
+  }
+
+  public ionViewDidLoad() {
+
+    this.getPreferences().then((preferencesParams: Parameter[])=>{
+      this.preferencesParams = preferencesParams;
+    });
   }
 
   public onToggle(item: Parameter, index: number){
 
     this.params[index].isActive = item.isActive;
-
     this.shoppingService.createConfig(this.params);
-    //console.log("parametre "+ index +" = "+item.name + ", "+item.isActive + ", "+item.isDisabled)
+  }
+
+  private getPreferencesConfigKeys(): number[]{
+    return this.shoppingService.getPreferencesConfigKeys(); 
   }
 
 }

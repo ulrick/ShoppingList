@@ -7,7 +7,13 @@
 <ion-header>
 
   <ion-navbar color="primary">
-    <ion-title text-center>Catégories d'articles</ion-title>
+    <ion-buttons left>
+      <button ion-button menuToggle class="toggle-menu">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+
+    <ion-title text-center>{{ 'sltk.category.headerTitle' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -17,15 +23,15 @@
   <ion-fab bottom right #fab>
       <button ion-fab mini color="secondary"><ion-icon name="add"></ion-icon></button>
       <ion-fab-list side="top">
-          <button (click)="addItemGroup(fab)" ion-fab mini><ion-icon name="add"></ion-icon></button>
-          <button (click)="initializeItemGroup(fab)" ion-fab mini><ion-icon name="ios-refresh-outline"></ion-icon></button>
+          <button (click)="addItemGroup(fab)" ion-fab mini color="primary"><ion-icon name="add"></ion-icon></button>
+          <button (click)="initializeItemGroup(fab)" ion-fab mini color="primary"><ion-icon name="ios-refresh-outline"></ion-icon></button>
         </ion-fab-list>
   </ion-fab>
 
   <ion-list reorder="true" (ionItemReorder)="reorderItems($event)">
-      <ion-item-sliding *ngFor="let item of itemsGroup ; let ind = index">
-        <ion-item padding-right class="item-group-label">
-          <ion-label class="selectable-item item-group" (click)="update(item, ind)">{{item.itemGroupLabel}}</ion-label>
+      <ion-item-sliding *ngFor="let item of itemsGroup ; let ind = index" [id]="item.itemGroupId" class="category-sliding-item">
+        <ion-item padding-right class="item-group-label" [class.selected]="item == selectedItem">
+          <ion-label class="selectable-item item-group" (click)="update(item, ind)">{{item.itemGroupLabel | translate}}</ion-label>
           <ion-toggle item-start [(ngModel)]="item.isActive" [disabled] = "item.isDisabled" checked = "item.isActive" (ionChange)="onToggle(item, ind)"></ion-toggle>  
         </ion-item>
         <ion-item-options side="right">

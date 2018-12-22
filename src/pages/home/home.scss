@@ -32,6 +32,10 @@ home {
             font-weight: lighter;
         }
 
+        ion-icon.search-item{
+            font-size: 2.5em;
+        }
+
         .form-control{
             font-family: "Open Sans", "Roboto";
             font-size: 1.8rem;
@@ -45,9 +49,9 @@ home {
 
     .text-input::-webkit-input-placeholder {
         text-indent: 0;
-        color: #d7d7d7;
+        color: #dedede;
         text-align: center;
-        font-size: 1.54rem;
+        font-size: 1.55rem;
         font-family: "Open Sans light italic";
       }
 
@@ -75,11 +79,11 @@ home {
 
     .list-header-divider{
         color: #D35137;
-        text-transform: capitalize;
+        text-transform: uppercase;
         font-size: 1.7rem;
         font-weight: bolder;
         font-family: "Open Sans light italic";
-        letter-spacing: 1px;
+        letter-spacing: 2px;
     }
 
     .hide-btn{
@@ -97,7 +101,17 @@ home {
 
     .highlight {
         background-color: #FBC13B !important;
-     }
+    }
+
+    .selected {
+        background: linear-gradient(to right, #56DCDF 0%, #0FAEB0 100%) !important;
+        color: white !important;
+        // padding-left: 150px;
+    }
+
+    .slide-class{
+        // padding-left : 150px;
+    }
 
 }
 
@@ -114,23 +128,6 @@ home {
 
 ion-toast.warning-message{
     color : #FFC527 !important;
-}
-
-ion-alert.custom-alert button.alert-button-group {
-    width: 33.33%;
-}
-
-ion-alert.custom-alert .alert-button-group .button-inner {
-    -webkit-box-pack: center;
-    -webkit-justify-content: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-}
-
-ion-alert.custom-alert .alert-button-group-vertical {
-    -webkit-flex-direction: row;
-    -ms-flex-direction: row;
-    flex-direction: row ;
 }
 
 input, textarea { 

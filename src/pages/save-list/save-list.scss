@@ -11,6 +11,7 @@ page-save-list {
           text-align: center;
           top:25%;
           height:25%;
+          border-bottom: 5px solid #0faeb0;
         }
       
         .card-title {
@@ -30,5 +31,9 @@ page-save-list {
           color: rgba(60,60,60,0.7);
         }
       
+    }
+
+    .favorite-date{
+      font-size : 1.1rem;
     }
 }

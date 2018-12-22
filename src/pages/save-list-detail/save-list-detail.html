@@ -7,14 +7,14 @@
 <ion-header>
 
   <ion-navbar color="primary">
-    <ion-title text-center>Détail de ma liste</ion-title>
+    <ion-title text-center>{{"sltk.favoriteDetail.headerTitle" | translate }}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content>
-    <ion-list *ngFor="let key of objectKeys ; let i = index">
+    <ion-list *ngFor="let key of itemGroupKeys ; let i = index">
         <ion-list-header color="light" text-center>
             <ion-label class="list-header-divider" color="secondary">{{ key }} </ion-label>
         </ion-list-header>

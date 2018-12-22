@@ -1,0 +1,123 @@
+{
+    "sltk": {
+        "home": {
+            "myShoppingList": "My shopping list",
+            "placeholder.insertNewItem": "Enter a new article here",
+            "update": {
+                "title": "Edit",
+                "itemName": "Article name",
+                "category": "Category"
+            },
+            "addCategoryTitle": "Articles category",
+            "confirmDuplicationTitle": "Confirm",
+            "confirmDuplicationMessage": "This article already exists! Would you like to add it?",
+            "saveListTitle": "Save the list",
+            "saveListPlaceholder": "List name",
+            "confirmCurrentListDeletionTitle": "Confirm",
+            "confirmCurrentListDeletionMessage": "Are you sure you want to delete these current items ?",
+            "smsContentTitle": "Shopping list",
+            "listIsEmpty": "The article list is empty!"
+        },
+        "category": {
+            "headerTitle": "Articles categories",
+            "addTitle": "Add a category",
+            "addPlaceholder": {
+                "house": "House",
+                "cleaningProduct": "Cleaning product",
+                "yogurt": "Yogurt",
+                "cheese": "Cheese",
+                "frozenProduct": "Frozen product",
+                "beverageAlcohol": "Beverage & Alcohol",
+                "seasoning": "Seasoning",
+                "meats": "Meats",
+                "fruitsVegetables": "Fruits & Vegetables",
+                "hygieneCare": "Hygiene & Care"
+            },
+            "deleteTitle": "Remove",
+            "deleteAllTitle": "Remove All",
+            "deleteMessage": "Are you sure you want to delete this category? The related article will move to category 'All items' ! ",
+            "deleteAllMessage": "Are you sure you want to delete all the categories list?",
+            "updateTitle": "Edit",
+            "defaultCategory": "All items"
+        },
+        "favorite": {
+            "headerTitle": "My favorites",
+            "emptyFavoriteMessage": "No shopping list is available here!",
+            "deleteTitle": "Remove",
+            "deleteMessage": "Are you sure you want to delete this favorite?",
+            "alertUseListTitle": "Import and Use",
+            "alertUseListMessage": "Do you want to save the shopping list currently in use ?",
+            "favoriteListName": "Favorite list",
+            "actionSheetViewBtn": "View",
+            "actionSheetImportBtn": "Import and use",
+            "actionSheetDeleteBtn": "Remove",
+            "actionSheetUpdateBtn": "Rename the list",
+            "updateTitle": "Edit",
+            "listNamePlaceholder": "List name"
+        },
+        "favoriteDetail": {
+            "headerTitle": "List Detail"
+        },
+        "options": {
+            "headerTitle": "Options",
+            "languageTitle": "Languages",
+            "preferenceTitle": "Settings & Preferences",
+            "preferences": {
+                "classifyArticleByCategory": "Classify articles in categories",
+                "insertArticleAtTopOfList": "Insert new article at the top of the list"
+            }
+        },
+        "tabs": {
+            "items": "Articles",
+            "category": "Categories",
+            "myLists": "Favorites",
+            "options": "Options"
+        },
+        "popoverMenu": {
+            "saveTheList": "Add list to favorites",
+            "sortAlphabetically": "Sort alphabetically",
+            "sendBySMS": "Send by SMS",
+            "removeAll": "Delete all"
+        },
+        "button": {
+            "ok": "Ok",
+            "cancel": "Cancel",
+            "validate": "Validate",
+            "yes": "Yes",
+            "no": "No",
+            "new": "New"
+        },
+        "menu": {
+            "title": "Menu",
+            "options": "Options",
+            "tips": "Help & Tips"
+        },
+        "language": {
+            "headerTitle": "Language",
+            "french": "French",
+            "english": "English",
+            "german": "Deutsch",
+            "spanish": "Spanish"
+        },
+        "notification": {
+            "successAdd": "Add with success!",
+            "successListSave": "List saved with success!",
+            "warningListNameEmpty": "Please fill in a name to your list!",
+            "successDeletion": "The shopping list is deleted with success!",
+            "successDeleteFavorite": "The favorite is deleted with success!",
+            "successImportList": "Favorite list imported with success!",
+            "warningDuplicateCategory": "This category already exist!",
+            "warningCurrentShoppingListIsEmpty": "No backup done because the current shopping list is empty.",
+            "warningDeleteDefaultCategory" : "Can not delete this category!",
+            "warningNoActiveCategory" : "You have chosen to classify items into categories. Please activate or create at least one category!"
+        },
+        "tips": {
+            "tip1Title" : "Check items while shopping",
+            "tip1Content" : "Slide your finger on an item from left to right to bar, check or put the item in the basket.",
+            "tip2Title" : "Reveal action buttons",
+            "tip2Content" : "Drag your finger across an article or category from the right to the left to reveal action buttons so that you can edit, delete, import, or perform a specific action.",
+            "tip3Title" : "Rearrange items between categories",
+            "tip3Content" : "Press the sort button of an item and move it to place the item at the desired place in the same category."
+        }
+    }
+}

@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="primary">
-    <ion-title text-center> Modification </ion-title>
+    <ion-title text-center> {{'sltk.home.update.title' | translate}} </ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -16,21 +16,20 @@
 <ion-content padding>
 
   <ion-list>
-
     <ion-item>
-      <ion-label color="secondary" floating>Nom de l'article</ion-label>
+      <ion-label color="secondary" floating>{{'sltk.home.update.itemName' | translate}}</ion-label>
       <ion-input [(ngModel)]="newItem.itemName" type="text" value="{{itemToReplace.itemName}}"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label color="secondary" floating>Catégorie</ion-label>
-      <ion-select [(ngModel)]="newItem.itemGroup">
-        <ion-option *ngFor="let group of itemsGroup" [value]="group.itemGroupLabel">{{group.itemGroupLabel}}</ion-option>
+      <ion-label color="secondary" floating>{{'sltk.home.update.category' | translate}}</ion-label>
+      <ion-select [(ngModel)]="newItem.itemGroup" okText="{{'sltk.button.ok' | translate}}" cancelText="{{'sltk.button.cancel' | translate}}">
+        <ion-option *ngFor="let group of itemsGroup" [value]="group.itemGroupLabel">{{group.itemGroupLabel | translate}}</ion-option>
       </ion-select>
     </ion-item>
 
     <div class="validation-btn">
-      <button ion-button color="primary" (click)="update(newItem)" block>Valider</button> 
+      <button ion-button color="primary" (click)="update(newItem)" block>{{'sltk.button.validate' | translate}}</button>
     </div>
     
   </ion-list>

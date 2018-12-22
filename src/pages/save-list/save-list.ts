@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import {ActionSheetController, AlertController,  IonicPage,   NavController,   NavParams} from 'ionic-angular';
+import {ActionSheetController, AlertController,  IonicPage,   NavController,   NavParams, ItemSliding} from 'ionic-angular';
 import { ShoppingItemSaveType } from '../model/sample-interface';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 import { SaveListDetailPage } from '../save-list-detail/save-list-detail';
 import { NotificationManagerProvider } from '../../providers/notification-manager/notification-manager';
+import { LanguageManagerProvider } from '../../providers/language-manager/language-manager';
 
 /**
  * Generated class for the SaveListPage page.
@@ -16,6 +17,7 @@ import { NotificationManagerProvider } from '../../providers/notification-manage
 @Component({
   selector: 'page-save-list',
   templateUrl: 'save-list.html',
+  providers: [ItemSliding]
 })
 export class SaveListPage {
 
@@ -26,7 +28,7 @@ export class SaveListPage {
               public shoppingService: ShoppingServiceProvider, 
               public notificationService: NotificationManagerProvider, 
               public alertCtrl: AlertController, 
-              public actionSheetCtrl: ActionSheetController) {
+              public actionSheetCtrl: ActionSheetController, public translationService: LanguageManagerProvider) {
 
     // this.getDuplicatedShoppingItems();
   }
@@ -69,21 +71,21 @@ export class SaveListPage {
   public delete(item : ShoppingItemSaveType, index: number): void {
 
     let confirm = this.alertCtrl.create({
-      title: 'Suppression',
-      message: 'Etes vous sûrs de vouloir supprimer cette liste ?',
+      title: this.translationService.instant("sltk.favorite.deleteTitle"),
+      message: this.translationService.instant("sltk.favorite.deleteMessage"),
       buttons: [
         {
-          text: 'Non',
+          text: this.translationService.instant("sltk.button.no"),
           handler: () => {
-            console.log('Disagree clicked');
+            // console.log('Disagree clicked');
           }
         },
         {
-          text: 'Oui',
+          text: this.translationService.instant("sltk.button.yes"),
           handler: () => {
             this.duplicatedShoppingList.splice(index, 1);
             this.shoppingService.createDuplicatedItems(this.duplicatedShoppingList).then(()=>{
-              this.notificationService.showNotification("Liste supprimée avec succès!");
+              this.notificationService.showNotification(this.translationService.instant("sltk.notification.successDeleteFavorite"));
             });
           }
         }
@@ -99,7 +101,7 @@ export class SaveListPage {
    * @memberof SaveListPage
    */
   public viewDuplicatedList(item: ShoppingItemSaveType): void {
-    this.navCtrl.push(SaveListDetailPage, item, {animate: true, direction: 'forward'});
+    this.navCtrl.push(SaveListDetailPage, item, {animate: true, animation:"ios-transition", direction: 'forward'});
   }
 
   /**
@@ -109,34 +111,41 @@ export class SaveListPage {
    * @param {ShoppingItemSaveType} item 
    * @memberof SaveListPage
    */
-  private importDuplicatedList(item: ShoppingItemSaveType, isSaveCurrent: boolean): void {
+  private importDuplicatedList(item: ShoppingItemSaveType): void {
 
     this.shoppingService.readShoppingItems().then(data =>{
 
-      var msg = isSaveCurrent ? "La liste en cours sera enregistrée après importation!" : "La liste en cours ne sera pas enregistrée après importation!"
+      // var msg = isSaveCurrent ? "La liste en cours sera enregistrée après importation!" : "La liste en cours ne sera pas enregistrée après importation!"
      
       let confirm = this.alertCtrl.create({
-        title: 'Importer la liste',
-        message: "Attention! " + msg,
+        cssClass: "custom-alert",
+        title: this.translationService.instant("sltk.favorite.alertUseListTitle"),
+        message: this.translationService.instant("sltk.favorite.alertUseListMessage"),
         buttons: [
           {
-            text: 'Annuler',
+            text: this.translationService.instant("sltk.button.cancel"),
             handler: () => {
             }
           },
           {
-            text: 'Importer',
+            text: this.translationService.instant("sltk.button.no"),
             handler: () => {
-
-              if(isSaveCurrent){
-                // Save the current list before erase it
-                this.shoppingService.createDuplicatedCurrentItems("sauvegarde du "+new Date().toLocaleDateString(), data).then(()=>{
+              this.importList(item);
+            }
+          },
+          {
+            text: this.translationService.instant("sltk.button.yes"),
+            handler: () => {
+              // Save the current list before erase it
+              if(data && data.length != 0){
+                this.shoppingService.createDuplicatedCurrentItems(this.translationService.instant("sltk.favorite.favoriteListName") + " " +(this.duplicatedShoppingList.length+1), data).then(()=>{
                   // Replace the current shopping list by the list to be imported
                   this.importList(item);
-                  return;
                 })
               }
-              this.importList(item);
+              else{
+                // this.notificationService.showNotification(this.translationService.instant("sltk.notification.warningCurrentShoppingListIsEmpty"));
+              }
             }
           }
         ]
@@ -145,12 +154,55 @@ export class SaveListPage {
     })    
   }
 
+  /**
+   * Import and use favorite list as current list
+   *
+   * @private
+   * @param {ShoppingItemSaveType} item
+   * @memberof SaveListPage
+   */
   private importList(item: ShoppingItemSaveType): void{
 
     this.shoppingService.createShoppingItems(item.value);
+
     // Rediriger vers la page des articles
     this.navCtrl.parent.select(0);
-    this.notificationService.showNotification("Liste importée avec succès !");
+    this.notificationService.showNotification(this.translationService.instant("sltk.notification.successImportList"));
+  }
+
+  /**
+   * Rename favorite name
+   *
+   * @param {ShoppingItemSaveType} itemToReplace
+   * @param {number} index
+   * @memberof SaveListPage
+   */
+  public update(itemToReplace: ShoppingItemSaveType, index: number, slidingItem: ItemSliding): void{
+  
+    if(slidingItem) slidingItem.close();
+    
+    let alert = this.alertCtrl.create();
+    alert.setTitle(this.translationService.instant("sltk.favorite.updateTitle"));
+    
+      alert.addInput({
+        type: 'text',
+        name: 'item',
+        value: itemToReplace.name,
+        placeholder: this.translationService.instant("sltk.favorite.listNamePlaceholder")
+      });
+
+      alert.addButton(this.translationService.instant("sltk.button.cancel"));
+      alert.addButton({
+        text: this.translationService.instant("sltk.button.ok"),
+        handler: data => {     
+          if(this.duplicatedShoppingList[index] != undefined && itemToReplace.name != data.item){
+            this.duplicatedShoppingList[index].name = data.item;
+            this.shoppingService.createDuplicatedItems(this.duplicatedShoppingList);
+          }
+        }
+      });
+
+      alert.present();
   }
 
   /**
@@ -161,14 +213,14 @@ export class SaveListPage {
    * @param {number} index 
    * @memberof SaveListPage
    */
-  public presentActionSheet(item: ShoppingItemSaveType, index: number) {
+  public presentActionSheet(item: ShoppingItemSaveType, index: number, slidingItem: ItemSliding) {
 
     let actionSheet = this.actionSheetCtrl.create({
       title: '',
       cssClass: 'action-sheet-custom',
       buttons: [
         {
-          text: 'Liste détaillée',
+          text: this.translationService.instant("sltk.favorite.actionSheetViewBtn"),
           icon: 'ios-eye-outline',
           role: 'destructive',
           handler: () => {
@@ -176,23 +228,23 @@ export class SaveListPage {
           }
         },
         {
-          text: 'Importer sans enregistrer la liste en cours',
-          icon: 'ios-download-outline',
+          text: this.translationService.instant("sltk.favorite.actionSheetUpdateBtn"),
+          icon: 'ios-create-outline',
           role: 'destructive',
           handler: () => {
-            this.importDuplicatedList(item, false);
+            this.update(item, index, slidingItem);
           }
         },
         {
-          text: 'Importer puis enregistrer la liste en cours',
+          text: this.translationService.instant("sltk.favorite.actionSheetImportBtn"),
           icon: 'ios-download-outline',
           role: 'destructive',
           handler: () => {
-            this.importDuplicatedList(item, true);
+            this.importDuplicatedList(item);
           }
         },
         {
-          text: 'Supprimer la liste',
+          text: this.translationService.instant("sltk.favorite.actionSheetDeleteBtn"),
           icon: 'ios-trash-outline',
           role: 'destructive',
           handler: () => {
@@ -200,11 +252,11 @@ export class SaveListPage {
           }
         },
         {
-          text: 'Annuler',
+          text: this.translationService.instant("sltk.button.cancel"),
           icon: 'close',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+            // console.log('Cancel clicked');
           }
         }
       ]

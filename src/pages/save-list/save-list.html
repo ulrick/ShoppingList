@@ -7,7 +7,14 @@
 <ion-header>
 
   <ion-navbar color="primary">
-    <ion-title text-center>Mes listes enregistrées</ion-title>
+    
+    <ion-buttons left>
+      <button ion-button menuToggle class="toggle-menu">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+
+    <ion-title text-center>{{'sltk.favorite.headerTitle' | translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -17,19 +24,20 @@
 
   <ion-card *ngIf = "duplicatedShoppingList.length == 0">
     <div class="card-title">Oups!!!</div>
-    <div class="card-subtitle">Aucune sauvegarde n'est disponible</div>
+    <div class="card-subtitle">{{'sltk.favorite.emptyFavoriteMessage' | translate}}</div>
   </ion-card>
 
   <ion-list *ngIf = "duplicatedShoppingList.length > 0">
-    <ion-item-sliding *ngFor="let item of duplicatedShoppingList ; let i = index">
+    <ion-item-sliding #slidingItem *ngFor="let item of duplicatedShoppingList ; let i = index">
           
-        <button ion-item *ngIf = "item != null" (click)="presentActionSheet(item, i)">
+        <button ion-item *ngIf = "item != null" (click)="presentActionSheet(item, i, slidingItem)">
             <h2>{{ item.name }}</h2>
-            <p item-end>{{ item.date | date:'dd/MM/yyyy @ HH:mm'}} <span class = "arrow-right"> <ion-icon name="ios-arrow-forward-outline"></ion-icon> </span> </p>
+            <p class="favorite-date" item-end>{{ item.date | date:'dd/MM/yyyy @ HH:mm'}} <span class = "arrow-right"> <ion-icon name="ios-arrow-forward-outline"></ion-icon> </span> </p>
         </button>
         <ion-item-options side="right">
           <button ion-button color="primary" icon-only (click)="viewDuplicatedList(item)" clear><ion-icon name="ios-eye-outline"></ion-icon></button>
-          <button ion-button color="secondary" icon-only (click)="importDuplicatedList(item)" clear><ion-icon name="ios-download-outline"></ion-icon></button>
+          <button ion-button color="primary" icon-only (click)="update(item, i, slidingItem)" clear><ion-icon name="ios-create-outline"></ion-icon></button>
+          <button ion-button color="primary" icon-only (click)="importDuplicatedList(item)" clear><ion-icon name="ios-download-outline"></ion-icon></button> 
           <button ion-button color="danger" icon-only (click)="delete(item, i)" clear><ion-icon name="ios-trash-outline"></ion-icon></button>
         </ion-item-options>      
     </ion-item-sliding>

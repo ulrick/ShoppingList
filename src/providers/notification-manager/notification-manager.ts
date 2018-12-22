@@ -13,7 +13,7 @@ import 'rxjs/add/operator/map';
 export class NotificationManagerProvider {
 
   constructor(public http: Http, private toastCtrl: ToastController,) {
-    console.log('Hello NotificationManagerProvider Provider');
+    //console.log('Hello NotificationManagerProvider Provider');
   }
 
 
@@ -29,7 +29,7 @@ export class NotificationManagerProvider {
 
     var options = {
       message: message,
-      duration: (option && option.duration) ? option.duration : 2500,
+      duration: (option && option.duration) ? option.duration : 2000,
       position: (option && option.position) ? option.position : 'middle',
       cssClass : (option && option.cssClass) ? option.cssClass : 'toast-class',
       showCloseButton : (option && option.showCloseButton) ? option.showCloseButton : false

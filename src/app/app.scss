@@ -15,21 +15,38 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
-.toast-class .toast-wrapper .toast-container{
+
+$color-primary: #0FAEB0;;
+$color-secondary: #D35137;
+$color-ternary:    #FBC13B;
+$color-white:    #FFF;
+
+ion-app {
+    font-family: "Open Sans", "Roboto" !important;
+    font-size: 1.4rem;
+    background-color: #f7f7f7;
+}
+
+.toast-class .toast-wrapper .toast-container {
     text-align: center;
 }
 
 .toast-class .toast-wrapper{
-    width: 45%;
-    border-radius: 8px;
+    width: 55%;
+    border-radius: 2px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     //background: rgba(60,60,60,0.7);
-    background: #FBC13B;
-    opacity: 0.8 !important;
+    background: $color-primary;
+    opacity: 0.9 !important;
 }
 
 .toast-class .toast-wrapper .toast-container .toast-message{
-    font-size: 1.7rem;
+    font-size: 1.8rem;
     line-height: 30px;
+}
+
+.toast-warning-class .toast-wrapper{
+    background: $color-secondary;
 }
 
 .action-sheet-custom .action-sheet-container .action-sheet-button{
@@ -37,14 +54,13 @@
 }
 
 .action-sheet-custom .action-sheet-container .action-sheet-button .action-sheet-icon{
-    color: #0FAEB0;
+    color: $color-primary;
 }
 
-.toolbar .toolbar-background {
-    background: #0FAEB0;
-    background: -webkit-gradient(linear, right top, left top, from(#56DCDF), to(#0FAEB0));
-    background: linear-gradient(to right, #56DCDF 0%, #0FAEB0 100%);
-    
+.toolbar .toolbar-background, .app-menu-toggle {
+    background: $color-primary;
+    background: -webkit-gradient(linear, right top, left top, from(#56DCDF), to($color-primary));
+    background: linear-gradient(to right, #56DCDF 0%, $color-primary 100%);
 }
 
 .toolbar{
@@ -54,6 +70,15 @@
 .toolbar-title{
     font-family: "Open Sans";
     font-size: 1.75rem !important;
+    color: $color-white;
+}
+
+.back-button {
+    color : $color-white;
+}
+
+.back-button:hover {
+    color : $color-secondary !important;
 }
 
 .item{
@@ -73,12 +98,78 @@
 
 .tabs {
     .tab-button, .tab-button-icon {
-        color: #D35137; 
+        // color: $color-secondary; 
+    }
+
+    .tab-button[aria-selected=true], .tab-button[aria-selected=true] .tab-button-icon {
+        color: red;
     }
 }
 
-ion-app {
-    font-family: "Open Sans", "Roboto" !important;
-    font-size: 1.4rem;
-    background-color: #f7f7f7;
+.toggle-menu:hover{
+    color: $color-secondary !important;
+}
+
+.app-menu-toggle .toolbar-title {
+    color : $color-white !important;
+}
+
+.menu-content-label{
+    padding-left: 1.5rem;
+    font-weight: bold;
+}
+
+ion-alert.custom-alert button.alert-button-group {
+    width: 33.33%;
+}
+
+ion-alert.custom-alert .alert-button-group .button-inner {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+ion-alert.custom-alert .alert-button-group-vertical {
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row ;
+}
+
+ion-alert.custom-alert .alert-head, ion-alert .alert-head {
+    background-color: $color-primary;
+    color: $color-white;
+    text-transform: uppercase;
+    text-align : center !important;
+    padding: 15px 0px 15px 0px !important;
+}
+
+ion-alert.custom-alert .alert-head .alert-title, ion-alert .alert-head .alert-title{
+    font-size : 20px;
+}
+
+ion-alert .alert-message{
+    padding-top: 20px !important;
+}
+
+/** Global ion header style  */
+ion-navbar{
+    background-color: $color-primary;
+    color: $color-white;
+
+    ion-title{
+        text-align: center;
+    }
+}
+/**  */
+
+/** Global ion Menu style*/
+ion-menu {
+    .menu-inner .header{
+
+    }
+    .menu-inner .content{
+        // background-color : $color-primary;
+        // color : $color-white;
+    }
 }

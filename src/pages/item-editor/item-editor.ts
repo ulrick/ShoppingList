@@ -37,13 +37,15 @@ export class ItemEditorPage {
   ionViewDidLoad() {
     // console.log('ionViewDidLoad ItemEditorPage');
     this.shoppingService.readShoppingItemsGroup().then((groups)=>{
-      this.itemsGroup = groups;
+      this.itemsGroup = groups.filter((val)=>{
+        return val.isActive;
+      });
     });
   }
 
   public update(item: ShoppingItem): void{
 
-    console.log(item);
+    //console.log(item);
     var itemsToSave : string = item.itemName;
 
     if(this.itemToReplace.itemName != item.itemName || this.itemToReplace.itemGroup != item.itemGroup){

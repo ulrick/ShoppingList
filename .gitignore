@@ -33,3 +33,7 @@ $RECYCLE.BIN/
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
+
+delivery/
+shopping-list-release-key.keystore
+shopping-list-release-v1.0.0.apk
