@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import {ActionSheetController, AlertController,  IonicPage,   NavController,   NavParams, ItemSliding} from 'ionic-angular';
-import { ShoppingItemSaveType } from '../model/sample-interface';
+import { ShoppingItemSaveType } from '../../shared/sample-interface';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 import { SaveListDetailPage } from '../save-list-detail/save-list-detail';
 import { NotificationManagerProvider } from '../../providers/notification-manager/notification-manager';
 import { LanguageManagerProvider } from '../../providers/language-manager/language-manager';
+import { HomePage } from '../home/home';
 
 /**
  * Generated class for the SaveListPage page.
@@ -166,7 +167,7 @@ export class SaveListPage {
     this.shoppingService.createShoppingItems(item.value);
 
     // Rediriger vers la page des articles
-    this.navCtrl.parent.select(0);
+    this.navCtrl.parent.select(0, {"listName": item.name });
     this.notificationService.showNotification(this.translationService.instant("sltk.notification.successImportList"));
   }
 

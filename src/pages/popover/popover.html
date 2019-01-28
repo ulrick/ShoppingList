@@ -8,19 +8,22 @@
 
 <ion-content>
 
-  <ion-list class="popover-items">
-      <button (click)="saveItemList()" ion-item detail-none class="text-button text-smaller" item-end>
-        <ion-icon name="ios-star-outline" color="ternary"></ion-icon> <span>{{'sltk.popoverMenu.saveTheList' | translate}}</span>
-      </button>
-      <button (click)="sortItems()" ion-item detail-none class="text-button text-larger" item-end>
-        <ion-icon name="ios-funnel-outline" color="ternary"></ion-icon> <span>{{'sltk.popoverMenu.sortAlphabetically' | translate}}</span>
-      </button>
-      <button (click)="sendSms()" ion-item detail-none class="text-button text-larger" item-end>
-        <ion-icon name="ios-mail-outline" color="ternary"></ion-icon> <span>{{'sltk.popoverMenu.sendBySMS' | translate}}</span>
-      </button>
-      <button (click)="deleteList()" ion-item detail-none class="text-button text-larger" item-end>
-        <ion-icon name="ios-trash-outline" color="secondary"></ion-icon> <span>{{'sltk.popoverMenu.removeAll' | translate}}</span>
-      </button> 
+  <ion-list class="popover-items" no-lines text-wrap>
+    <button (click)="saveItemList()" ion-item detail-none class="text-button text-smaller" item-end>
+      <ion-icon name="ios-star-outline" color="ternary"></ion-icon> <span>{{'sltk.popoverMenu.saveTheList' | translate}}</span>
+    </button>
+    <button (click)="updateSavedList()" ion-item detail-none class="text-button text-smaller" item-end>
+      <ion-icon name="ios-create-outline" color="ternary"></ion-icon> <span>{{'sltk.popoverMenu.updateExistingList' | translate}}</span>
+    </button>
+    <button (click)="sortItems()" ion-item detail-none class="text-button text-larger" item-end>
+      <ion-icon name="ios-funnel-outline" color="ternary"></ion-icon> <span>{{'sltk.popoverMenu.sortAlphabetically' | translate}}</span>
+    </button>
+    <button (click)="sendSms()" ion-item detail-none class="text-button text-larger" item-end>
+      <ion-icon name="ios-mail-outline" color="ternary"></ion-icon> <span>{{'sltk.popoverMenu.sendBySMS' | translate}}</span>
+    </button>
+    <button (click)="deleteList()" ion-item detail-none class="text-button text-larger" item-end>
+      <ion-icon name="ios-trash-outline" color="secondary"></ion-icon> <span>{{'sltk.popoverMenu.removeAll' | translate}}</span>
+    </button> 
   </ion-list>
 
 </ion-content>

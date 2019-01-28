@@ -1,9 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, AlertController, FabContainer, Content } from 'ionic-angular';
-import { ItemGroup, ShoppingItem } from '../model/sample-interface';
+import { ItemGroup, ShoppingItem } from '../../shared/sample-interface';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
-//import _ from "lodash";
-import { Utils } from '../model/utils';
+import { Utils } from '../../shared/utils';
 import { LanguageManagerProvider } from '../../providers/language-manager/language-manager';
 import { NotificationManagerProvider } from '../../providers/notification-manager/notification-manager';
 
@@ -50,7 +49,7 @@ export class ItemGroupPage {
 
   private resetItemGroup(): void{
     this.shoppingService.readShoppingItemsGroup().then(groupList => { 
-      this.itemsGroup = [{itemGroupId : 0, itemGroupLabel : "sltk.category.defaultCategory", itemGroupValue : "any" , isActive : true, isDisabled: true}];
+      this.itemsGroup = [{itemGroupId : 0, itemGroupLabel : "sltk.category.defaultCategory", itemGroupValue : "any" , isActive : false, isDisabled: false}];
       this.shoppingService.createShoppingItemsGroup(this.itemsGroup);
     })
   }
@@ -290,15 +289,8 @@ export class ItemGroupPage {
 
 
   public generatePlaceHolder(): string {
-    return this.translationService.instant(this.placeholderProposer[this.getRandomInt(this.placeholderProposer.length)]);
+    return this.translationService.instant(this.placeholderProposer[Utils.getRandomInt(this.placeholderProposer.length)]);
   }
-
-  private getRandomInt(max): number {
-    return Math.floor(Math.random() * Math.floor(max));
-  }
-
-  
-
 
 }
 

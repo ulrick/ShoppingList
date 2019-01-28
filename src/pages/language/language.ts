@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { LanguageType, Parameter } from '../model/sample-interface';
+import { LanguageType, Parameter } from '../../shared/sample-interface';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 import { LanguageManagerProvider } from '../../providers/language-manager/language-manager';
 

@@ -16,9 +16,9 @@
 <ion-content>
     <ion-list *ngFor="let key of itemGroupKeys ; let i = index">
         <ion-list-header color="light" text-center>
-            <ion-label class="list-header-divider" color="secondary">{{ key }} </ion-label>
+            <ion-label class="list-header-divider" color="secondary">{{ key | translate}} </ion-label>
         </ion-list-header>
-        <ion-item *ngFor="let item of itemsGroupByCategory[key] ; let j = index" [class.line-through] = "item.isBought">  
+        <ion-item *ngFor="let item of itemsGroupByCategory[key] ; let j = index" [class.line-through] = "item.isBought"> 
           <ion-label class="selectable-item">
             {{ item.itemName }}
           </ion-label>

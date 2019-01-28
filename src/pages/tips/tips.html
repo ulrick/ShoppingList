@@ -19,7 +19,7 @@
 
     <ion-slide class="slide1-content content-slide">
       <ion-list class="tips-content-list">
-        <ion-item-sliding #slidingItem *ngFor="let item of items; let i = index" [id]=item.itemId>
+        <ion-item-sliding #slidingItem *ngFor="let item of items; let i = index">
           <ion-item [class.line-through] = "item.isBought">
             <h2>{{item.itemName}}</h2>
           </ion-item>
@@ -52,9 +52,9 @@
   
     <ion-slide class="slide3-content content-slide">
 
-      <ion-list class="tips-content-list" >
-        <ion-item-group reorder="true">
-          <ion-item *ngFor="let item of items" [class.line-through] = "item.isBought">
+      <ion-list class="tips-content-list">
+        <ion-item-group reorder="true" (ionItemReorder)="reorderItems($event)">
+          <ion-item *ngFor="let item of cloneItems; let ind = index" [class.line-through] = "item.isBought" [id]=item.itemId>
             <h2>{{item.itemName}}</h2>
           </ion-item>
         </ion-item-group>

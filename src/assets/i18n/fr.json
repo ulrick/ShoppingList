@@ -16,7 +16,11 @@
             "confirmCurrentListDeletionTitle": "Confirmer",
             "confirmCurrentListDeletionMessage": "Etes vous sûrs de vouloir supprimer la liste en cours ?",
             "smsContentTitle": "Liste de course",
-            "listIsEmpty": "The article list is empty!"
+            "listIsEmpty": "La liste est vide!",
+            "sendSMS": "Envoyer un message",
+            "smsCheckedList": "Articles barrés",
+            "smsNotCheckedList": "Articles non barrés",
+            "smsListAll": "Tous les articles"
         },
         "category": {
             "headerTitle": "Catégories d'articles",
@@ -41,7 +45,7 @@
             "defaultCategory": "Tous les articles"
         },
         "favorite": {
-            "headerTitle": "Mes favoris",
+            "headerTitle": "Mes listes",
             "emptyFavoriteMessage": "Aucune liste d'achat n'est disponible ici!",
             "deleteTitle": "Supprimer",
             "deleteMessage": "Etes vous sûrs de vouloir supprimer cette liste favorite ?",
@@ -70,14 +74,15 @@
         "tabs": {
             "items": "Articles",
             "category": "Catégories",
-            "myLists": "Favoris",
+            "myLists": "Mes listes",
             "options": "Options"
         },
         "popoverMenu": {
-            "saveTheList": "Ajouter la liste aux favoris",
-            "sortAlphabetically": "Ordre alphabétique",
+            "saveTheList": "Enregistrer cette liste",
+            "sortAlphabetically": "Trier par ordre alphabétique",
             "sendBySMS": "Envoyer par SMS",
-            "removeAll": "Tout supprimer"
+            "removeAll": "Tout supprimer",
+            "updateExistingList": "Remplacer une liste existante"
         },
         "button": {
             "ok": "Ok",
@@ -104,19 +109,22 @@
             "successListSave": "La liste est enregistrée avec succès!",
             "warningListNameEmpty": "Veuillez renseigner un nom à votre liste!",
             "successDeletion": "La liste est supprimée avec succès!",
-            "successDeleteFavorite": "Favoris supprimé avec succès!",
+            "successDeleteFavorite": "Liste supprimée avec succès!",
             "successImportList": "Liste favorite importée avec succès !",
-            "warningDuplicateCategory": "This category already exist!",
+            "warningDuplicateCategory": "Cette catégorie existe déjà!",
             "warningCurrentShoppingListIsEmpty": "Aucune sauvegarde effectuée car la liste d'achat en cours est vide.",
             "warningDeleteDefaultCategory" : "Impossible de supprimer cette catégorie!",
-            "warningNoActiveCategory" : "Vous avez choisi de classer les articles dans des catégories. Veuillez activer ou créer au moins une catégorie!"
+            "warningNoActiveCategory" : "Vous avez choisi de classer les articles dans des catégories. Veuillez activer ou créer au moins une catégorie!",
+            "warningSavedListAlreadyExist": "Ce nom de liste existe déjà ... Veuillez entrer un autre nom!",
+            "warningSavedListEmpty": "Il n'existe pas de liste sauvegardée",
+            "successUpdateSavedList": "Liste mise à jour avec succès!"
         },
         "tips": {
             "tip1Title" : "Barrer ou cocher les articles pendant votre course",
             "tip1Content" : "Glisser votre doigt sur un article de la gauche vers la droite pour barrer, cocher ou mettre l'article dans le panier.",
             "tip2Title" : "Révéler les boutons d'action",
-            "tip2Content" : "Glisser votre doigt sur un article ou une categorie de la droite vers la gauche pour révéler les boutons d'action afin de pouvoir modifier, supprimer, importer ou effectuer une action spécifique.",
-            "tip3Title" : "Réorganiser les articles entre categorie",
+            "tip2Content" : "Toucher ou glisser votre doigt sur un article ou une catégorie de la droite vers la gauche pour révéler les boutons d'action afin de pouvoir modifier, supprimer, importer ou effectuer une action spécifique.",
+            "tip3Title" : "Réorganiser les articles entre catégorie",
             "tip3Content" : "Appuyer sur le bouton de tri d'un article et bougez le pour placer l'article à l'endroit voulu dans la même catégorie."
         }
     }

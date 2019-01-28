@@ -1,7 +1,8 @@
 import { Component, ViewChildren, QueryList, ViewChild } from '@angular/core';
-import { IonicPage, NavController, NavParams, ItemSliding, Item, Slides } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ItemSliding, Slides, ItemReorder, Platform } from 'ionic-angular';
 import { LanguageManagerProvider } from '../../providers/language-manager/language-manager';
-import { ShoppingItem } from '../model/sample-interface';
+import { ShoppingItem } from '../../shared/sample-interface';
+import { Utils } from '../../shared/utils';
 
 /**
  * Generated class for the TipsPage page.
@@ -20,6 +21,7 @@ export class TipsPage {
   
   @ViewChildren(ItemSliding) private slidingItems: QueryList<ItemSliding>;
   @ViewChild(Slides) slides: Slides;
+  @ViewChild(ItemReorder) private reorderItem: ItemReorder;
 
   isSliding: any = [];
 
@@ -29,15 +31,16 @@ export class TipsPage {
   private intervalId;
   private timeoutId;
   private times = 0;
+  private index: number = 1;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public translationService: LanguageManagerProvider, public slidingItem: ItemSliding) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public translationService: LanguageManagerProvider, public slidingItem: ItemSliding, public platform: Platform) {
     this.items = [
                     {itemId:1, itemName : "Tomates", itemGroup: "Fruits", isBought : true},
-                    {itemId:2, itemName : "Déodorant", itemGroup: "Soins", isBought : true},
+                    {itemId:2, itemName : "Déodorant", itemGroup: "Soins", isBought : false},
                     {itemId:3, itemName : "Pommes de terre", itemGroup: "Tous les articles", isBought : false},
                   ];
-
-    //this.cloneItems = this.items.copyWithin(2,0);
+    
+    this.cloneItems = this.items.slice(0);
   }
 
   ionViewDidLoad() {
@@ -55,9 +58,17 @@ export class TipsPage {
   }
 
   private reorderItems(indexes) {
-    let element = this.items[indexes.from];
-    this.items.splice(indexes.from, 1);
-    this.items.splice(indexes.to, 0, element);
+
+    var fromIndex = 0;
+    var toIndex = indexes;
+
+    // var elt = document.getElementsByClassName("reorder-list-active-custom");
+    // var selectedElt: any = elt[0].children[0];
+    // var height: number = selectedElt.offsetHeight;
+
+    let element = this.cloneItems[fromIndex];
+    this.cloneItems.splice(fromIndex, 1);
+    this.cloneItems.splice(toIndex, 0, element);
   }
 
   private triggerAnimation(): void{
@@ -65,8 +76,9 @@ export class TipsPage {
       this.openSlides();
       this.timeoutId = window.setTimeout(() => {
         this.removeSlides();
-      }, 500);
-    }, 4000);
+        this.index = Utils.getRandomInt(3);
+      }, 1000);
+    }, 3500);
   }
 
   private clearTimesInterval(){
@@ -74,7 +86,7 @@ export class TipsPage {
     window.clearTimeout(this.timeoutId);
   }
 
-  private openSliding(){
+  private checkItem(){
     this.slidingItems.toArray()[1].moveSliding(0);
     this.slidingItems.toArray()[1].moveSliding(150);
   }
@@ -85,21 +97,24 @@ export class TipsPage {
   }
 
   private openSlides(){
-    this.openSliding();
+    this.checkItem();
     this.openSlidingRight();
+    this.reorderItems(this.index);
     this.times++;
-    if(this.times >= 5){
+    if(this.times >= 8){
       this.times = 0;
       this.clearTimesInterval();
     }
   }
 
   private removeSlides(){
-    //this.slidingItems.toArray()[1].close();
+
     this.slidingItems.map((item=>{return item.close()}));
 
-    this.isBought = this.items[1].isBought == true ? false : true;
-    this.items[1].isBought = this.isBought;
+    if(this.slides.getActiveIndex() == 1){
+      this.isBought = this.items[1].isBought == true ? false : true;
+      this.items[1].isBought = this.isBought;
+    }
   }
 
 
@@ -115,7 +130,7 @@ export class TipsPage {
       
     }
     if(currentIndex == 3){
-      //this.reorderItems(2);
+      // this.reorderItems(this.index);
     }
     this.triggerAnimation();
     console.log('Current index is', currentIndex);

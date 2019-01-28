@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { TranslateService } from '@ngx-translate/core';
 import { ShoppingServiceProvider } from '../shopping-service/shopping-service';
-import { Parameter } from '../../pages/model/sample-interface';
+import { Parameter } from '../../shared/sample-interface';
 import { CommonParameters } from '../../shared/common-parameters';
 
 /*

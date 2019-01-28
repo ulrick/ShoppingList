@@ -33,16 +33,38 @@ page-tips {
 
     ion-item-sliding.active-slide .item{
         transition-timing-function: ease-in !important;
-        //transition-duration: 2s !important;
     }
 
     .tips-content-list{
-        width:75%;
+        width:70%;
         margin: auto;
     }
 
-    .tips-content-list ion-item-sliding .item{
+    .tips-content-list ion-item-sliding .item, .tips-content-list ion-item-group .item {
         min-height: 3rem;
         height: 3.5rem;
     }
+
+    // .reorder-active-custom {
+    //     -webkit-animation: mymove 2s infinite; /* Chrome, Safari, Opera */
+    //     animation: mymove 2s infinite;
+    // }
+
+    .reorder-list-active-custom .item {
+        transition: -webkit-transform 300ms;
+        transition: transform 300ms;
+        transition: transform 300ms, -webkit-transform 300ms;
+        will-change: transform; 
+    }
+
+    /* Chrome, Safari, Opera */
+    @-webkit-keyframes mymove {
+        100% {-webkit-transform: translateY(30px);}
+    }
+  
+    /* Standard syntax */
+    @keyframes mymove {
+        100% {transform: translateY(30px);}
+    }
+
 }

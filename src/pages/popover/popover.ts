@@ -43,6 +43,11 @@ export class PopoverPage{
     this.viewCtrl.dismiss();
   }
 
+  public updateSavedList(): void{
+    this.homePage.updateSavedList();
+    this.viewCtrl.dismiss();
+  }
+
   public sortItems(): void {
     this.homePage.sortItems();
     this.viewCtrl.dismiss();

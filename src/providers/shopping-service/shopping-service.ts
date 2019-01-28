@@ -1,7 +1,7 @@
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
-import { ShoppingItem, ItemGroup, ShoppingItemSaveType, Parameter } from '../../pages/model/sample-interface';
+import { ShoppingItem, ItemGroup, ShoppingItemSaveType, Parameter } from '../../shared/sample-interface';
 import { ParameterType } from '../../shared/Enums';
 import { NotificationManagerProvider } from '../notification-manager/notification-manager';
 
@@ -98,7 +98,7 @@ export class ShoppingServiceProvider {
         var msg: string = "Une erreur s'est produite! Veuillez reinitialiser les données de l'application dans les paramètres du téléphone! ";
         this.notificationService.showNotification(msg);
         this.handleError(msg + error);
-      })
+      });
       
       /*************************************** End of script v.0 ****************************************/
     //});
@@ -194,41 +194,42 @@ export class ShoppingServiceProvider {
       }
     });
 
-    // // Add item id to items table
-    // this.readShoppingItems().then((items: ShoppingItem[])=>{
-    //   var tableChanged: boolean = false;
-    //   if(items.some(val=>{
-    //     return val.itemId == null;
-    //   }) ){
-    //     for (let index = 0; index < items.length; index++) {
-    //       var element = items[index];
-    //       element.itemId = index;
-    //     }
-    //     tableChanged = true;
-    //   }
 
-    //   if(tableChanged){
-    //     this.createShoppingItems(items);
-    //   }
-    // });
+    // Add item id to items table
+    this.readShoppingItems().then((items: ShoppingItem[])=>{
+      var tableChanged: boolean = false;
+      if(items.some(val=>{
+        return val.itemId == null || isNaN(val.itemId);
+      }) ){
+        for (let index = 0; index < items.length; index++) {
+          var element = items[index];
+          element.itemId = index;
+        }
+        tableChanged = true;
+      }
 
-    // // Add items-group id to items-group table
-    // this.readShoppingItemsGroup().then((items: ItemGroup[])=>{
-    //   var tableChanged: boolean = false;
-    //   if(items.some(val=>{
-    //     return val.itemGroupId == null;
-    //   }) ){
-    //     for (let index = 0; index < items.length; index++) {
-    //       var element = items[index];
-    //       element.itemGroupId = index;
-    //     }
-    //     tableChanged = true;
-    //   }
+      if(tableChanged){
+        this.createShoppingItems(items);
+      }
+    });
 
-    //   if(tableChanged){
-    //     this.createShoppingItemsGroup(items);
-    //   }
-    // });
+    // Add items-group id to items-group table
+    this.readShoppingItemsGroup().then((items: ItemGroup[])=>{
+      var tableChanged: boolean = false;
+      if(items.some(val=>{
+        return val.itemGroupId == null || isNaN(val.itemGroupId);
+      }) ){
+        for (let index = 0; index < items.length; index++) {
+          var element = items[index];
+          element.itemGroupId = index;
+        }
+        tableChanged = true;
+      }
+
+      if(tableChanged){
+        this.createShoppingItemsGroup(items);
+      }
+    });
 
     // /************************* END MIGRATION SCRIPT 1 ************************/
   }
@@ -265,6 +266,12 @@ export class ShoppingServiceProvider {
       });
   }
 
+  /**
+   * Deletes shopping items
+   *
+   * @returns {Promise<void>}
+   * @memberof ShoppingServiceProvider
+   */
   public removeShoppingItems(): Promise<void>{
     return this.storage.remove(ShoppingServiceProvider.DB_TABLE_ITEMS);
   }
@@ -305,7 +312,7 @@ export class ShoppingServiceProvider {
    * @returns {Promise<void>} 
    * @memberof ShoppingServiceProvider
    */
-  public createDuplicatedCurrentItems(listName : string, items:ShoppingItem[]) : Promise<void>{
+  public createDuplicatedCurrentItems(listName : string, items:ShoppingItem[]) : Promise<ShoppingItemSaveType[]>{
 
     return this.readDuplicatedItems().then((duplicatedItems: ShoppingItemSaveType[])=>{
 
@@ -314,7 +321,8 @@ export class ShoppingServiceProvider {
       duplicatedItem.value = items;
       duplicatedItem.date = new Date().getTime();
       duplicatedItems.unshift(duplicatedItem);
-      this.createDuplicatedItems(duplicatedItems);
+      
+      return this.createDuplicatedItems(duplicatedItems);
       
     })    
   }

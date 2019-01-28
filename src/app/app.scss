@@ -16,10 +16,11 @@
 // automatically applied to the <body> element in the app.
 
 
-$color-primary: #0FAEB0;;
-$color-secondary: #D35137;
-$color-ternary:    #FBC13B;
-$color-white:    #FFF;
+$color-primary:     #0FAEB0;;
+$color-secondary:   #D35137;
+$color-ternary:     #FBC13B;
+$color-white:       #FFF;
+$color-red:         red;
 
 ion-app {
     font-family: "Open Sans", "Roboto" !important;
@@ -84,7 +85,7 @@ ion-app {
 .item{
     font-family: "Open Sans", "Roboto" !important;
     color: #333 !important;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 
 .selectable-item{
@@ -102,7 +103,7 @@ ion-app {
     }
 
     .tab-button[aria-selected=true], .tab-button[aria-selected=true] .tab-button-icon {
-        color: red;
+        color: $color-red;
     }
 }
 
@@ -136,6 +137,10 @@ ion-alert.custom-alert .alert-button-group-vertical {
     flex-direction: row ;
 }
 
+ion-alert.custom-alert .alert-button{
+    padding: 6px;
+}
+
 ion-alert.custom-alert .alert-head, ion-alert .alert-head {
     background-color: $color-primary;
     color: $color-white;
@@ -150,6 +155,10 @@ ion-alert.custom-alert .alert-head .alert-title, ion-alert .alert-head .alert-ti
 
 ion-alert .alert-message{
     padding-top: 20px !important;
+}
+
+ion-alert.custom-alert .alert-wrapper{
+    min-width: 270px;
 }
 
 /** Global ion header style  */

@@ -16,7 +16,11 @@
             "confirmCurrentListDeletionTitle": "Bestätigen",
             "confirmCurrentListDeletionMessage": "Möchten Sie diese aktuellen Elemente wirklich löschen?",
             "smsContentTitle": "Einkaufsliste",
-            "listIsEmpty": "Die Artikelliste ist leer!"
+            "listIsEmpty": "Die Artikelliste ist leer!",
+            "sendSMS": "Nachricht senden",
+            "smsCheckedList": "Gesperrte Artikel",
+            "smsNotCheckedList": "Nicht gesperrte Artikel",
+            "smsListAll": "Alle Artikel"
         },
         "category": {
             "headerTitle": "Artikelkategorien",
@@ -41,7 +45,7 @@
             "defaultCategory": "Alle Artikel"
         },
         "favorite": {
-            "headerTitle": "Meine Favoriten",
+            "headerTitle": "Meine Listen",
             "emptyFavoriteMessage": "Hier gibt es keine Einkaufsliste!",
             "deleteTitle": "Entfernen",
             "deleteMessage": "Möchten Sie diesen Favoriten wirklich löschen?",
@@ -70,14 +74,15 @@
         "tabs": {
             "items": "Artikel",
             "category": "Kategorien",
-            "myLists": "Favoriten",
+            "myLists": "Meine Listen",
             "options": "Optionen"
         },
         "popoverMenu": {
-            "saveTheList": "Zu Favoriten hinzufügen",
+            "saveTheList": "Speichern Sie diese Liste",
             "sortAlphabetically": "Alphabetisch sortieren",
             "sendBySMS": "Per SMS senden",
-            "removeAll": "Alles löschen"
+            "removeAll": "Alles löschen",
+            "updateExistingList": "Ersetzen Sie eine vorhandene Liste"
         },
         "button": {
             "ok": "Ok",
@@ -104,18 +109,21 @@
             "successListSave": "Liste mit Erfolg gespeichert!",
             "warningListNameEmpty": "Bitte geben Sie Ihrer Liste einen Namen!",
             "successDeletion": "Die Einkaufsliste wird mit Erfolg gelöscht!",
-            "successDeleteFavorite": "Der Favorit wird mit Erfolg gelöscht!",
+            "successDeleteFavorite": "Liste erfolgreich gelöscht!",
             "successImportList": "Favoritenliste mit Erfolg importiert!",
             "warningDuplicateCategory": "Diese Kategorie existiert bereits!",
             "warningCurrentShoppingListIsEmpty": "Es wurde keine Sicherung durchgeführt, da die aktuelle Einkaufsliste leer ist.",
             "warningDeleteDefaultCategory" : "Kann diese Kategorie nicht löschen!",
-            "warningNoActiveCategory" : "Sie haben sich dafür entschieden, Artikel in Kategorien einzuordnen. Bitte aktivieren oder erstellen Sie mindestens eine Kategorie!"
+            "warningNoActiveCategory" : "Sie haben sich dafür entschieden, Artikel in Kategorien einzuordnen. Bitte aktivieren oder erstellen Sie mindestens eine Kategorie!",
+            "warningSavedListAlreadyExist": "Dieser Listenname existiert bereits ... Bitte geben Sie einen anderen Namen ein!",
+            "warningSavedListEmpty": "Es gibt keine gespeicherte Liste",
+            "successUpdateSavedList": "Liste mit Erfolg aktualisiert!"
         },
         "tips": {
             "tip1Title" : "Überprüfen Sie die Artikel beim Einkaufen",
             "tip1Content" : "Schieben Sie Ihren Finger auf einen Artikel von links nach rechts in die Leiste, prüfen Sie den Artikel oder legen Sie ihn in den Warenkorb",
             "tip2Title" : "Aktionsschaltflächen anzeigen",
-            "tip2Content" : "Bewegen Sie Ihren Finger von rechts nach links über einen Artikel oder eine Kategorie, um die Aktionsschaltflächen einzublenden, die Sie bearbeiten, löschen, importieren oder eine bestimmte Aktion ausführen können.",
+            "tip2Content" : "Tippen oder ziehen Sie Ihren Finger von rechts nach links über einen Artikel oder eine Kategorie, um die Aktionsschaltflächen einzublenden, die Sie bearbeiten, löschen, importieren oder eine bestimmte Aktion ausführen können.",
             "tip3Title" : "Elemente zwischen Kategorien neu anordnen",
             "tip3Content" : "Drücken Sie die Sortiertaste eines Artikels und verschieben Sie ihn, um den Artikel an der gewünschten Stelle in derselben Kategorie zu platzieren."
         }

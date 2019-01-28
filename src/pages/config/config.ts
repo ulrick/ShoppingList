@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { Parameter } from '../model/sample-interface';
+import { Parameter } from '../../shared/sample-interface';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 
 

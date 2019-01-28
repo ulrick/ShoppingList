@@ -16,7 +16,11 @@
             "confirmCurrentListDeletionTitle": "Confirm",
             "confirmCurrentListDeletionMessage": "Are you sure you want to delete these current items ?",
             "smsContentTitle": "Shopping list",
-            "listIsEmpty": "The article list is empty!"
+            "listIsEmpty": "The article list is empty!",
+            "sendSMS": "Send a message",
+            "smsCheckedList": "Checked items",
+            "smsNotCheckedList": "Unchecked items",
+            "smsListAll": "All items"
         },
         "category": {
             "headerTitle": "Articles categories",
@@ -41,7 +45,7 @@
             "defaultCategory": "All items"
         },
         "favorite": {
-            "headerTitle": "My favorites",
+            "headerTitle": "My lists",
             "emptyFavoriteMessage": "No shopping list is available here!",
             "deleteTitle": "Remove",
             "deleteMessage": "Are you sure you want to delete this favorite?",
@@ -70,14 +74,15 @@
         "tabs": {
             "items": "Articles",
             "category": "Categories",
-            "myLists": "Favorites",
+            "myLists": "My lists",
             "options": "Options"
         },
         "popoverMenu": {
-            "saveTheList": "Add list to favorites",
+            "saveTheList": "Save this list",
             "sortAlphabetically": "Sort alphabetically",
             "sendBySMS": "Send by SMS",
-            "removeAll": "Delete all"
+            "removeAll": "Delete all",
+            "updateExistingList": "Replace an existing list"
         },
         "button": {
             "ok": "Ok",
@@ -104,18 +109,21 @@
             "successListSave": "List saved with success!",
             "warningListNameEmpty": "Please fill in a name to your list!",
             "successDeletion": "The shopping list is deleted with success!",
-            "successDeleteFavorite": "The favorite is deleted with success!",
+            "successDeleteFavorite": "The list is deleted with success!",
             "successImportList": "Favorite list imported with success!",
             "warningDuplicateCategory": "This category already exist!",
             "warningCurrentShoppingListIsEmpty": "No backup done because the current shopping list is empty.",
             "warningDeleteDefaultCategory" : "Can not delete this category!",
-            "warningNoActiveCategory" : "You have chosen to classify items into categories. Please activate or create at least one category!"
+            "warningNoActiveCategory" : "You have chosen to classify items into categories. Please activate or create at least one category!",
+            "warningSavedListAlreadyExist": "This list name already exist... Please enter an other name!",
+            "warningSavedListEmpty": "There is no saved list",
+            "successUpdateSavedList": "List updated with success!"
         },
         "tips": {
             "tip1Title" : "Check items while shopping",
             "tip1Content" : "Slide your finger on an item from left to right to bar, check or put the item in the basket.",
             "tip2Title" : "Reveal action buttons",
-            "tip2Content" : "Drag your finger across an article or category from the right to the left to reveal action buttons so that you can edit, delete, import, or perform a specific action.",
+            "tip2Content" : "Tap or drag your finger across an article or category from the right to the left to reveal action buttons so that you can edit, delete, import, or perform a specific action.",
             "tip3Title" : "Rearrange items between categories",
             "tip3Content" : "Press the sort button of an item and move it to place the item at the desired place in the same category."
         }

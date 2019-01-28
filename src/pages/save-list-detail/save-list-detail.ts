@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { ShoppingItem, ItemGroup } from '../model/sample-interface';
+import { ShoppingItem, ItemGroup, ShoppingItemSaveType } from '../../shared/sample-interface';
 import _ from "lodash";
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 

@@ -13,10 +13,14 @@
             "confirmDuplicationMessage": "¡Este artículo ya existe! ¿Desea agregarlo?",
             "saveListTitle": "Guardar la lista",
             "saveListPlaceholder": "Nombre de lista",
-            "confirmCurrentListDeletionTitle": "Confirm",
+            "confirmCurrentListDeletionTitle": "Confirmar",
             "confirmCurrentListDeletionMessage": "¿Está seguro de que desea eliminar estos elementos actuales?",
             "smsContentTitle": "Lista de compras",
-            "listIsEmpty": "¡La lista de artículos está vacía!"
+            "listIsEmpty": "¡La lista de artículos está vacía!",
+            "sendSMS": "Enviar un mensaje",
+            "smsCheckedList": "Artículos barrados",
+            "smsNotCheckedList": "Artículos no barrados",
+            "smsListAll": "Todos los articulos"
         },
         "category": {
             "headerTitle": "Categorías de artículos",
@@ -34,26 +38,26 @@
                 "hygieneCare": "Higiene y cuidado"
             },
             "deleteTitle": "Eliminar",
-            "deleteAllTitle": "Remove All",
+            "deleteAllTitle": "Borrar todo",
             "deleteMessage": "¿Está seguro de que desea eliminar esta categoría? ¡El artículo relacionado pasará a la categoría 'Todos los articulos'!",
             "deleteAllMessage": "¿Está seguro de que desea eliminar todas las listas de categorías?",
             "updateTitle": "Editar",
             "defaultCategory": "Todos los articulos"
         },
         "favorite": {
-            "headerTitle": "Mis favoritos",
+            "headerTitle": "Mis listas",
             "emptyFavoriteMessage": "¡No hay lista de compras disponible aquí!",
             "deleteTitle": "Eliminar",
             "deleteMessage": "¿Está seguro de que desea eliminar este favorito?",
             "alertUseListTitle": "Importar y usar",
             "alertUseListMessage": "¿Desea guardar la lista de compras actualmente en uso?",
             "favoriteListName": "Lista de favoritos",
-            "actionSheetViewBtn": "View",
+            "actionSheetViewBtn": "Visualización",
             "actionSheetImportBtn": "Importar y usar",
             "actionSheetDeleteBtn": "Eliminar",
             "actionSheetUpdateBtn": "Renombrar la lista",
             "updateTitle": "Editar",
-            "listNamePlaceholder": "List name"
+            "listNamePlaceholder": "Nombre de la lista"
         },
         "favoriteDetail": {
             "headerTitle": "Detalle de lista"
@@ -70,14 +74,15 @@
         "tabs": {
             "items": "Artículos",
             "category": "Categorías",
-            "myLists": "Favoritos",
+            "myLists": "Mis listas",
             "options": "Opciones"
         },
         "popoverMenu": {
-            "saveTheList": "Agregar lista a favoritos",
-            "sortAlphabetically": "Sort alfabéticamente",
+            "saveTheList": "Guardar esta lista",
+            "sortAlphabetically": "Ordenar alfabéticamente",
             "sendBySMS": "Enviar por SMS",
-            "removeAll": "Delete all"
+            "removeAll": "Borrar todo",
+            "updateExistingList": "Reemplazar una lista existente"
         },
         "button": {
             "ok": "Bien",
@@ -104,18 +109,21 @@
             "successListSave": "Lista guardada con éxito!",
             "warningListNameEmpty": "¡Por favor, introduzca un nombre en su lista!",
             "successDeletion": "¡La lista de la compra se elimina con éxito!",
-            "successDeleteFavorite": "¡El favorito se elimina con éxito!",
+            "successDeleteFavorite": "Lista eliminada exitosamente!",
             "successImportList": "Lista de favoritos importada con éxito!",
             "warningDuplicateCategory": "¡Esta categoría ya existe!",
             "warningCurrentShoppingListIsEmpty": "No se hizo copia de seguridad porque la lista de compras actual está vacía.",
             "warningDeleteDefaultCategory" : "No se puede eliminar esta categoría!",
-            "warningNoActiveCategory" : "Has elegido clasificar los artículos en categorías. Por favor, active o cree al menos una categoría!"
+            "warningNoActiveCategory" : "Has elegido clasificar los artículos en categorías. Por favor, active o cree al menos una categoría!",
+            "warningSavedListAlreadyExist": "Este nombre de lista ya existe ... ¡Por favor ingrese otro nombre!",
+            "warningSavedListEmpty": "No hay lista guardada",
+            "successUpdateSavedList": "Lista actualizada con éxito!"
         },
         "tips": {
             "tip1Title" : "Revisa los artículos mientras compras",
             "tip1Content" : "Deslice el dedo sobre un elemento de izquierda a derecha para barra, verifique o coloque el elemento en la cesta.",
             "tip2Title" : "Revelar botones de acción",
-            "tip2Content" : "Arrastre el dedo por un artículo o categoría de derecha a izquierda para mostrar los botones de acción, de modo que pueda editar, eliminar, importar o realizar una acción específica.",
+            "tip2Content" : "Toca o arrastre el dedo por un artículo o categoría de derecha a izquierda para mostrar los botones de acción, de modo que pueda editar, eliminar, importar o realizar una acción específica.",
             "tip3Title" : "Reorganizar artículos entre categorías",
             "tip3Content" : "Presione el botón de ordenar de un elemento y muévalo para colocar el elemento en el lugar deseado en la misma categoría."
         }

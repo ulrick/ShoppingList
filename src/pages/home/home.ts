@@ -1,17 +1,16 @@
 //import {Utils} from '../model/utils';
 //import { FirebaseProvider } from './../../providers/firebase/firebase';
 import { Component, ViewChild  } from '@angular/core';
-import { NavController, IonicPage, AlertController, FabContainer, Events, ItemSliding, List, PopoverController, Content } from 'ionic-angular';
+import { NavController, IonicPage, AlertController, FabContainer, Events, ItemSliding, List, PopoverController, Content, NavParams } from 'ionic-angular';
 import { ShoppingServiceProvider } from '../../providers/shopping-service/shopping-service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ShoppingItem, ItemGroup, Parameter } from '../model/sample-interface';
+import { ShoppingItem, ItemGroup, Parameter, ShoppingItemSaveType } from '../../shared/sample-interface';
 import _ from "lodash";
 import { NotificationManagerProvider } from '../../providers/notification-manager/notification-manager';
 import { PopoverPage } from '../popover/popover';
 import { ItemEditorPage } from '../item-editor/item-editor';
 import { SMS } from '@ionic-native/sms';
 import { LanguageManagerProvider } from '../../providers/language-manager/language-manager';
-import { TranslateService } from '@ngx-translate/core';
 import { ItemGroupPage } from '../item-group/item-group';
 
 
@@ -37,6 +36,9 @@ export class HomePage {
   public boughtItems: number = 0 ;
   public parameters: Parameter[] = [];
   private selectedItem: ShoppingItem;
+  private savedList: ShoppingItemSaveType[] = [];
+  private isListSaved: boolean = false;
+  public currentListTitle: string = "sltk.home.myShoppingList";
   
   @ViewChild('myList', {read: List}) list: List;
   @ViewChild(Content) content: Content;
@@ -50,14 +52,14 @@ export class HomePage {
               public alertCtrl: AlertController, 
               public popoverCtrl: PopoverController,
               public sms: SMS, 
-              public translationService: LanguageManagerProvider) {
+              public translationService: LanguageManagerProvider,
+              public navParams: NavParams,) {
 
-    //this.translationService.setDefaultLang('en');
+    this.currentListTitle = navParams.data.listName;
 
     this.itemForm = formBuilder.group({
       "itemName" : ["", Validators.required]
     });
-
      
   }
 
@@ -81,8 +83,14 @@ export class HomePage {
         this.updateWithExistingItemsGroup();
         this.updateCart();
       });
+    })
+    .then(()=>{
+      this.shoppingService.readDuplicatedItems().then((savedList: ShoppingItemSaveType[])=>{
+        this.savedList = savedList;
+      });
     });
-    //console.log("I am entered");
+    
+    this.currentListTitle = this.navParams.data.listName;
   }
 
   /**
@@ -168,7 +176,7 @@ export class HomePage {
           alert.addButton({
             text: this.translationService.instant("sltk.button.new"),
             handler: data => {
-              this.navCtrl.parent.select(2);
+              this.navCtrl.parent.select(1);
             }
           });
 
@@ -225,7 +233,7 @@ export class HomePage {
         //return Utils.removeAccents(val.itemName).toLowerCase();
         return val.itemName.toLowerCase();
     });
-    // If not found, add
+    // Add If not exists
     if(itemList != null && itemList.indexOf(this.newItem.toLowerCase()) === -1) {
       this.createNewItem(data);
     }
@@ -253,7 +261,7 @@ export class HomePage {
       isAtTopOfList = false;
     }
     // Save into database
-    this.getShoppingItems().then( itemList => {
+    this.getShoppingItems().then( (itemList: ShoppingItem[]) => {
 
       shoppingItem.itemId = Math.max(...itemList.map(val=>{return val.itemId;})) + 1;
       shoppingItem.itemName = this.newItem;
@@ -416,45 +424,133 @@ export class HomePage {
   public saveItemList(fab?: FabContainer){
     //fab.close();
     if(this.shoppingItems != null && this.shoppingItems.length > 0){
-        let alert = this.alertCtrl.create({
-          title: this.translationService.instant("sltk.home.saveListTitle"),
-          inputs: [
-            {
-              name: 'listName',
-              placeholder: this.translationService.instant("sltk.home.saveListPlaceholder")
+      
+      let alert = this.alertCtrl.create({
+        title: this.translationService.instant("sltk.home.saveListTitle"),
+        inputs: [
+          {
+            name: 'listName',
+            placeholder: this.translationService.instant("sltk.home.saveListPlaceholder")
+          }
+        ],
+        buttons: [
+          {
+            text: this.translationService.instant("sltk.button.cancel"),
+            role: 'cancel',
+            handler: data => {
+              //console.log('Cancel clicked');
             }
-          ],
-          buttons: [
-            {
-              text: this.translationService.instant("sltk.button.cancel"),
-              role: 'cancel',
-              handler: data => {
-                //console.log('Cancel clicked');
-              }
-            },
-            {
-              text: this.translationService.instant("sltk.button.ok"), 
-              handler: data => {
-                //console.log(data);
-                if (data.listName != "") {
-                  
-                  this.getShoppingItems().then(items =>{
-                  
-                      this.shoppingService.createDuplicatedCurrentItems(data.listName, items).then(()=>{
-                        this.notificationService.showNotification(this.translationService.instant("sltk.notification.successListSave"));
-                      })
-                    
+          },
+          {
+            text: this.translationService.instant("sltk.button.ok"), 
+            handler: data => {
+              //console.log(data);
+              if (data.listName != "") {
+                // Create a new list if not exists!
+                if(this.findSavedList(data.listName) == null){
+                  this.shoppingService.createDuplicatedCurrentItems(data.listName, this.shoppingItems).then((items: ShoppingItemSaveType[])=>{
+                    this.savedList = items;
+                    this.currentListTitle = data.listName;
+                    this.notificationService.showNotification(this.translationService.instant("sltk.notification.successListSave"));
                   })
-                  
-                } else {
-                  this.notificationService.showNotification(this.translationService.instant("sltk.notification.warningListNameEmpty"));
-                  return false;
                 }
+                else{
+                  this.notificationService.showNotification(this.translationService.instant("sltk.notification.warningSavedListAlreadyExist"));
+                }
+  
+              } else {
+                this.notificationService.showNotification(this.translationService.instant("sltk.notification.warningListNameEmpty"));
+                return false;
               }
             }
-          ]
+          }
+        ]
+      });
+      alert.present();
+    }
+  }
+
+  /**
+   * Retrieves an existing saved list by his name
+   *
+   * @private
+   * @param {string} listName
+   * @returns {ShoppingItemSaveType}
+   * @memberof HomePage
+   */
+  private findSavedList(listName: string): ShoppingItemSaveType{
+
+    return this.savedList.find((val: ShoppingItemSaveType)=>{
+      return val.name.toLowerCase() == listName.toLowerCase();
+    });
+  }
+
+  /**
+   * Update an existing saved list.
+   * An existing list will be replaced by tthe current list
+   *
+   * @returns {void}
+   * @memberof HomePage
+   */
+  public updateSavedList(): void{
+
+    if(this.shoppingItems == null || (this.shoppingItems && this.shoppingItems.length == 0)) return;
+
+    if(this.savedList == null || (this.savedList && this.savedList.length == 0)){
+      this.notificationService.showNotification(this.translationService.instant("sltk.notification.warningSavedListEmpty"));
+    }
+
+    let alert = this.alertCtrl.create();
+
+    alert.setTitle(this.translationService.instant("sltk.home.saveListTitle"));
+    alert.setCssClass('custom-alert');
+    
+    this.savedList.forEach((value, index) => {
+      
+      alert.addInput({
+        type: 'radio',
+        id : index.toString(),
+        label: value.name,
+        value: value.name,
+        //checked: value.itemGroupLabel == this.getActiveItemsGroup()[0].itemGroupLabel ? true : false
+      });
+      
+    });
+
+    alert.addButton(this.translationService.instant("sltk.button.cancel"));
+
+    alert.addButton({
+      text: this.translationService.instant("sltk.button.ok"),
+      handler: data => {
+        this.replaceExistingList(data)
+      }
+    });
+
+    alert.present();
+  }
+
+  /**
+   * Replaces an existing list by the current one
+   *
+   * @private
+   * @param {string} name
+   * @memberof HomePage
+   */
+  private replaceExistingList(name: string): void{
+
+    if(this.findSavedList(name) && this.savedList.indexOf(this.findSavedList(name)) != -1){
+      var index = this.savedList.indexOf(this.findSavedList(name));
+
+      if(this.savedList[index] != undefined){
+        this.savedList[index].value = this.shoppingItems;
+        this.savedList[index].date = new Date().getTime();
+        this.shoppingService.createDuplicatedItems(this.savedList).then((items: ShoppingItemSaveType[])=>{
+          this.savedList = items;
+          this.notificationService.showNotification(this.translationService.instant("sltk.notification.successUpdateSavedList"));
         });
-        alert.present();
+        
+      }
+      
     }
   }
 
@@ -559,21 +655,96 @@ export class HomePage {
       return;
     }
 
-    var itemsToSend : string = this.translationService.instant("sltk.home.smsContentTitle") + " \n \n";
-    
-    itemsToSend = itemsToSend.concat(
-      this.shoppingItems.map((val)=>{
-      return val.itemName;
-    }).join(", \n") );
+    var checkedList = this.shoppingItems.filter((value: ShoppingItem, index: number)=>{
+      return value.isBought;
+    });
 
-    var options = {
-      replaceLineBreaks: true,
-      android: {
-        intent: 'INTENT' 
-      }
+    var notCheckedList = this.shoppingItems.filter((value: ShoppingItem, index: number)=>{
+      return !value.isBought;
+    })
+
+    let alert = this.alertCtrl.create({
+      inputs: [
+        {
+          type: 'radio',
+          id : "all",
+          label: this.translationService.instant("sltk.home.smsListAll"),
+          value: "all",
+          checked: true
+        }
+      ]
+    });
+
+    alert.setTitle(this.translationService.instant("sltk.home.sendSMS"));
+    alert.setCssClass('custom-alert');
+
+    if(checkedList.length > 0){
+      alert.addInput({
+        type: 'radio',
+        id : "check",
+        label: this.translationService.instant("sltk.home.smsCheckedList"),
+        value: "checkedList",
+        checked: false 
+      });
     }
 
-    this.sms.send('', itemsToSend, options);
+    if(notCheckedList.length > 0){
+      alert.addInput({
+        type: 'radio',
+        id : "nocheck",
+        label: this.translationService.instant("sltk.home.smsNotCheckedList"),
+        value: "notCheckedList",
+        checked: false 
+      });
+    }
+
+    alert.addButton(this.translationService.instant("sltk.button.cancel"));
+
+    alert.addButton({
+      text: this.translationService.instant("sltk.button.ok"),
+      handler: data => {
+
+        var itemsTitleToSend : string = this.translationService.instant("sltk.home.smsContentTitle") + " \n \n";
+        var itemsToSend: string = "";
+
+        if(data == "checkedList"){
+          itemsToSend = checkedList.map((val)=>{   
+            return val.itemName;
+          }).join(", \n") ;
+        }
+        else if(data == "notCheckedList"){
+          itemsToSend = notCheckedList.map((val)=>{   
+            return val.itemName;
+          }).join(", \n") ;
+        }
+        else{
+          itemsToSend = this.shoppingItems.map((val)=>{   
+            return val.itemName;
+          }).join(", \n") ;
+        }
+
+        var options = {
+          replaceLineBreaks: true,
+          android: {
+            intent: 'INTENT' 
+          }
+        }
+
+        if(itemsToSend != ""){
+          itemsToSend = itemsTitleToSend.concat(itemsToSend);
+          this.sms.send('', itemsToSend, options);
+        }
+        else{
+          this.notificationService.showNotification(this.translationService.instant("sltk.home.listIsEmpty"));
+        }
+      }
+    });
+
+    alert.present();
+  }
+
+  private createMessage(option: string){
+
   }
 
   /**
@@ -607,7 +778,6 @@ export class HomePage {
          this.getShoppingItems();
       }
     }
-    
     
     console.log(searchValue);
   }
