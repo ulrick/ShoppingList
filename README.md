@@ -24,4 +24,7 @@ Create a complete shopping list.
 ##### v1.0.1 
 - Add internationalization i18n French, english, Deutcsh, Spanish
 - Highlight new inserted item and category
-- Modify a saved list name (favorite)
+- Modify a saved list name
+- Add help and tips pages
+- Replace an existing list with the current one
+- Select which items to send while sending SMS
