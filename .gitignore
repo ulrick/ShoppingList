@@ -35,5 +35,8 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 
 delivery/
-shopping-list-release-key.keystore
+
 shopping-list-release-v1.0.0.apk
+shopping-list-release-v1.0.1.apk
+keystore.jks
+upload_certificate.pem
