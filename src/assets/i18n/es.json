@@ -15,12 +15,7 @@
             "saveListPlaceholder": "Nombre de lista",
             "confirmCurrentListDeletionTitle": "Confirmar",
             "confirmCurrentListDeletionMessage": "¿Está seguro de que desea eliminar estos elementos actuales?",
-            "smsContentTitle": "Lista de compras",
-            "listIsEmpty": "¡La lista de artículos está vacía!",
-            "sendSMS": "Enviar un mensaje",
-            "smsCheckedList": "Artículos barrados",
-            "smsNotCheckedList": "Artículos no barrados",
-            "smsListAll": "Todos los articulos"
+            "listIsEmpty": "¡La lista de artículos está vacía!"
         },
         "category": {
             "headerTitle": "Categorías de artículos",
@@ -80,7 +75,6 @@
         "popoverMenu": {
             "saveTheList": "Guardar esta lista",
             "sortAlphabetically": "Ordenar alfabéticamente",
-            "sendBySMS": "Enviar por SMS",
             "removeAll": "Borrar todo",
             "updateExistingList": "Reemplazar una lista existente"
         },

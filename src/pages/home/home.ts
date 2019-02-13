@@ -9,7 +9,6 @@ import _ from "lodash";
 import { NotificationManagerProvider } from '../../providers/notification-manager/notification-manager';
 import { PopoverPage } from '../popover/popover';
 import { ItemEditorPage } from '../item-editor/item-editor';
-import { SMS } from '@ionic-native/sms';
 import { LanguageManagerProvider } from '../../providers/language-manager/language-manager';
 import { ItemGroupPage } from '../item-group/item-group';
 
@@ -51,7 +50,6 @@ export class HomePage {
               public formBuilder : FormBuilder, 
               public alertCtrl: AlertController, 
               public popoverCtrl: PopoverController,
-              public sms: SMS, 
               public translationService: LanguageManagerProvider,
               public navParams: NavParams,) {
 
@@ -640,111 +638,6 @@ export class HomePage {
     popover.present({
       ev: myEvent
     });
-  }
-
-  /**
-   * Sends SMS
-   *
-   * @returns {void}
-   * @memberof HomePage
-   */
-  public sendSms(): void{
-
-    if(this.shoppingItems.length == 0){
-      this.notificationService.showNotification(this.translationService.instant("sltk.home.listIsEmpty"));
-      return;
-    }
-
-    var checkedList = this.shoppingItems.filter((value: ShoppingItem, index: number)=>{
-      return value.isBought;
-    });
-
-    var notCheckedList = this.shoppingItems.filter((value: ShoppingItem, index: number)=>{
-      return !value.isBought;
-    })
-
-    let alert = this.alertCtrl.create({
-      inputs: [
-        {
-          type: 'radio',
-          id : "all",
-          label: this.translationService.instant("sltk.home.smsListAll"),
-          value: "all",
-          checked: true
-        }
-      ]
-    });
-
-    alert.setTitle(this.translationService.instant("sltk.home.sendSMS"));
-    alert.setCssClass('custom-alert');
-
-    if(checkedList.length > 0){
-      alert.addInput({
-        type: 'radio',
-        id : "check",
-        label: this.translationService.instant("sltk.home.smsCheckedList"),
-        value: "checkedList",
-        checked: false 
-      });
-    }
-
-    if(notCheckedList.length > 0){
-      alert.addInput({
-        type: 'radio',
-        id : "nocheck",
-        label: this.translationService.instant("sltk.home.smsNotCheckedList"),
-        value: "notCheckedList",
-        checked: false 
-      });
-    }
-
-    alert.addButton(this.translationService.instant("sltk.button.cancel"));
-
-    alert.addButton({
-      text: this.translationService.instant("sltk.button.ok"),
-      handler: data => {
-
-        var itemsTitleToSend : string = this.translationService.instant("sltk.home.smsContentTitle") + " \n \n";
-        var itemsToSend: string = "";
-
-        if(data == "checkedList"){
-          itemsToSend = checkedList.map((val)=>{   
-            return val.itemName;
-          }).join(", \n") ;
-        }
-        else if(data == "notCheckedList"){
-          itemsToSend = notCheckedList.map((val)=>{   
-            return val.itemName;
-          }).join(", \n") ;
-        }
-        else{
-          itemsToSend = this.shoppingItems.map((val)=>{   
-            return val.itemName;
-          }).join(", \n") ;
-        }
-
-        var options = {
-          replaceLineBreaks: true,
-          android: {
-            intent: 'INTENT' 
-          }
-        }
-
-        if(itemsToSend != ""){
-          itemsToSend = itemsTitleToSend.concat(itemsToSend);
-          this.sms.send('', itemsToSend, options);
-        }
-        else{
-          this.notificationService.showNotification(this.translationService.instant("sltk.home.listIsEmpty"));
-        }
-      }
-    });
-
-    alert.present();
-  }
-
-  private createMessage(option: string){
-
   }
 
   /**

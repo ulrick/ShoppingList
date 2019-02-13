@@ -15,12 +15,7 @@
             "saveListPlaceholder": "Nom de la liste",
             "confirmCurrentListDeletionTitle": "Confirmer",
             "confirmCurrentListDeletionMessage": "Etes vous sûrs de vouloir supprimer la liste en cours ?",
-            "smsContentTitle": "Liste de course",
-            "listIsEmpty": "La liste est vide!",
-            "sendSMS": "Envoyer un message",
-            "smsCheckedList": "Articles barrés",
-            "smsNotCheckedList": "Articles non barrés",
-            "smsListAll": "Tous les articles"
+            "listIsEmpty": "La liste est vide!"
         },
         "category": {
             "headerTitle": "Catégories d'articles",
@@ -80,7 +75,6 @@
         "popoverMenu": {
             "saveTheList": "Enregistrer cette liste",
             "sortAlphabetically": "Trier par ordre alphabétique",
-            "sendBySMS": "Envoyer par SMS",
             "removeAll": "Tout supprimer",
             "updateExistingList": "Remplacer une liste existante"
         },

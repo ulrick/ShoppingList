@@ -27,4 +27,4 @@ Create a complete shopping list.
 - Modify a saved list name
 - Add help and tips pages
 - Replace an existing list with the current one
-- Select which items to send while sending SMS
+- Remove SMS features

@@ -53,9 +53,4 @@ export class PopoverPage{
     this.viewCtrl.dismiss();
   }
 
-  public sendSms(): void{
-    this.homePage.sendSms();
-    this.viewCtrl.dismiss();
-  }
-
 }

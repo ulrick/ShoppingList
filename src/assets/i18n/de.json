@@ -15,12 +15,7 @@
             "saveListPlaceholder": "Listenname",
             "confirmCurrentListDeletionTitle": "Bestätigen",
             "confirmCurrentListDeletionMessage": "Möchten Sie diese aktuellen Elemente wirklich löschen?",
-            "smsContentTitle": "Einkaufsliste",
-            "listIsEmpty": "Die Artikelliste ist leer!",
-            "sendSMS": "Nachricht senden",
-            "smsCheckedList": "Gesperrte Artikel",
-            "smsNotCheckedList": "Nicht gesperrte Artikel",
-            "smsListAll": "Alle Artikel"
+            "listIsEmpty": "Die Artikelliste ist leer!"
         },
         "category": {
             "headerTitle": "Artikelkategorien",
@@ -80,7 +75,6 @@
         "popoverMenu": {
             "saveTheList": "Speichern Sie diese Liste",
             "sortAlphabetically": "Alphabetisch sortieren",
-            "sendBySMS": "Per SMS senden",
             "removeAll": "Alles löschen",
             "updateExistingList": "Ersetzen Sie eine vorhandene Liste"
         },

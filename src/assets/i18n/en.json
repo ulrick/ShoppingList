@@ -15,12 +15,7 @@
             "saveListPlaceholder": "List name",
             "confirmCurrentListDeletionTitle": "Confirm",
             "confirmCurrentListDeletionMessage": "Are you sure you want to delete these current items ?",
-            "smsContentTitle": "Shopping list",
-            "listIsEmpty": "The article list is empty!",
-            "sendSMS": "Send a message",
-            "smsCheckedList": "Checked items",
-            "smsNotCheckedList": "Unchecked items",
-            "smsListAll": "All items"
+            "listIsEmpty": "The article list is empty!"
         },
         "category": {
             "headerTitle": "Articles categories",
@@ -80,7 +75,6 @@
         "popoverMenu": {
             "saveTheList": "Save this list",
             "sortAlphabetically": "Sort alphabetically",
-            "sendBySMS": "Send by SMS",
             "removeAll": "Delete all",
             "updateExistingList": "Replace an existing list"
         },

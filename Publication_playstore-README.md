@@ -20,20 +20,24 @@
     * $ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore C:\Users\yawo\Desktop\Lab\ShoppingList\shopping-list-release-key.keystore C:\Users\yawo\Desktop\Lab\ShoppingList\platforms\android\build\outputs\apk\android-release-unsigned.apk shopping-list-key
 
 ### Sinon dans le cas d'une mise à jour,
+
 - Utiliser la clé préalablement générée pour signer l'apk
     * $ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore C:\Users\yawo\Desktop\Lab\ShoppingList\shopping-list-release-key.keystore C:\Users\yawo\Desktop\Lab\ShoppingList\platforms\android\build\outputs\apk\android-release-unsigned.apk shopping-list-key
+
+#### NB: [important]: Dans le cas du shopping list j'ai perdu ma clé et j'ai dû demander un reset de la part de Google qui m'a fait générer une nouvelle clé afin que je puisse mettre à jour mon application.
+
+$ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore C:\Users\yawo\Desktop\Lab\ShoppingList\keystore.jks C:\Users\yawo\Desktop\Lab\ShoppingList\platforms\android\build\outputs\apk\android-release-unsigned.apk upload
+
 
 6. Archiver l'apk qu'on vient de signer dans la version appropriée
     * $ cd C:\Users\yawo\AppData\Local\Android\sdk\build-tools\27.0.1
     * $ zipalign -v 4 C:\Users\yawo\Desktop\Lab\ShoppingList\platforms\android\build\outputs\apk\android-release-unsigned.apk C:\Users\yawo\Desktop\Lab\ShoppingList\shopping-list-release-v1.0.[newVersion].apk
 
-# NB: [important]: Dans le cas du shopping list j'ai perdu ma clé et j'ai dû demander un reset de la part de Google qui m'a fait générer une nouvelle clé afin que je puisse mettre à jour mon application.
+
 
 ### Alias Name et clé de ShoppingList: 
 alias : upload
 key : keystore.jks
-
-$ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore C:\Users\yawo\Desktop\Lab\ShoppingList\keystore.jks C:\Users\yawo\Desktop\Lab\ShoppingList\platforms\android\build\outputs\apk\android-release-unsigned.apk upload
 
 
 

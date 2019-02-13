@@ -19,7 +19,6 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { ConfigPage } from '../pages/config/config';
 import { PopoverPage } from '../pages/popover/popover';
 import { ItemEditorPage } from '../pages/item-editor/item-editor';
-import { SMS } from '@ionic-native/sms';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -90,7 +89,6 @@ export function createTranslateLoader(http: HttpClient) {
     NativeStorage,
     NotificationManagerProvider,
     ItemSliding,
-    SMS,
     LanguageManagerProvider
   ]
 })
